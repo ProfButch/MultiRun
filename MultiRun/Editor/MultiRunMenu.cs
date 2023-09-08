@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 
+
 namespace com.bitwesgames {
     
 
@@ -13,6 +14,15 @@ namespace com.bitwesgames {
     public static class MultiRunMenu{
 
         private static MultiRunEditor mre = new MultiRunEditor();
+
+
+        private static void ShowLogs() {
+            var window = EditorWindow.GetWindow<com.bitwesgames.LogViewer>();
+            window.basePath = Path.Join(Path.GetDirectoryName(mre.buildPath), Path.GetFileNameWithoutExtension(mre.buildPath));
+            window.ShowPopup();
+            window.LoadLogs();
+        }
+
 
 
         //--------------------------------
@@ -32,7 +42,7 @@ namespace com.bitwesgames {
         // Section 100
         //--------------------------------
         [MenuItem("MultiRun/Build", false, 100)]
-        private static void MnuBuildTheBuild() {
+        private static void MnuBuild() {
             string curPath = mre.buildPath;
             // This handles the one case where it wasn't set and the user canceled
             // the dialog to set the build path.
@@ -100,6 +110,11 @@ namespace com.bitwesgames {
         //--------------------------------
         // Section 999
         //--------------------------------
+        [MenuItem("MultiRun/View Logs", false, 999)]
+        private static void MnuViewLogs() {
+            ShowLogs();
+        }
+
         [MenuItem("MultiRun/Show Files", false, 999)]
         private static void MnuViewFiles() {
             string parentDir = Path.GetDirectoryName(mre.buildPath);
