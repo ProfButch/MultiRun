@@ -24,7 +24,6 @@ namespace com.bitwesgames {
         }
 
 
-
         //--------------------------------
         // Section 1
         //--------------------------------
@@ -114,6 +113,7 @@ namespace com.bitwesgames {
         private static void MnuViewLogs() {
             ShowLogs();
         }
+
 
         [MenuItem("MultiRun/Show Files", false, 999)]
         private static void MnuViewFiles() {
