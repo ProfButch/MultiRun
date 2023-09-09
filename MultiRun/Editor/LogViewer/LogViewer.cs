@@ -13,7 +13,8 @@ namespace com.bitwesgames
     public class LogViewer : EditorWindow
     {
         /**
-         * 
+         * Logic for the HSplit containers that have the two LogDisplays in
+         * them.
          */
         private class LogSplit
         {
@@ -62,17 +63,19 @@ namespace com.bitwesgames
             {
                 return !leftLog.root.visible && !rightLog.root.visible;
             }
+
+            public void ReadLogs(){
+                leftLog.CallMeInUpdate();
+                rightLog.CallMeInUpdate();
+            }
         }
 
-
-        // ---------------------------------------------------------------------
-        // ---------------------------------------------------------------------
 
         private TwoPaneSplitView mainSplit;
         private Label lblInfo;
         private LogSplit topSplit;
-        private LogSplit botSplit;        
-        
+        private LogSplit botSplit;
+
         private Toolbar toolbar;
         private ToolbarToggle[] showLogButtons = new ToolbarToggle[4];
         private ToolbarToggle tglAutoRefresh;
@@ -81,7 +84,7 @@ namespace com.bitwesgames
         private bool autoRefresh = true;
         private float refreshInterval = 1.0f;
         private float timeSinceLastCheck = 0.0f;
-        
+
 
         public string basePath;
 
@@ -277,19 +280,17 @@ namespace com.bitwesgames
         public void LoadLogs()
         {
             lblInfo.text = basePath;
-            topSplit.leftLog.LoadLog($"{basePath}_1.log");
-            topSplit.rightLog.LoadLog($"{basePath}_2.log");
-            botSplit.leftLog.LoadLog($"{basePath}_3.log");
-            botSplit.rightLog.LoadLog($"{basePath}_4.log");
+            topSplit.leftLog.TailFile($"{basePath}_1.log");
+            topSplit.rightLog.TailFile($"{basePath}_2.log");
+            botSplit.leftLog.TailFile($"{basePath}_3.log");
+            botSplit.rightLog.TailFile($"{basePath}_4.log");
             _should_scroll_to_bottom = true;
         }
 
         public void RefreshLogs()
         {
-            topSplit.leftLog.RefreshLog();
-            topSplit.rightLog.RefreshLog();
-            botSplit.leftLog.RefreshLog();
-            botSplit.rightLog.RefreshLog();
+            topSplit.ReadLogs();
+            botSplit.ReadLogs();
         }
     }
 }

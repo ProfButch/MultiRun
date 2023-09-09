@@ -4,6 +4,9 @@ using System.IO;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using UnityEngine;
+using System.Threading;
+using System.Text;
+
 
 namespace com.bitwesgames
 {
@@ -17,12 +20,9 @@ namespace com.bitwesgames
         private Scroller vertScroll;
         private Scroller horizScroll;
 
-        private DateTime lastFileChangeTime;
-        //private DateTime lastCreationTime;  REMEMBER, creation time was buggy on mac
         private string logPath = string.Empty;
-
-        private int linesRead = 0;
-
+        private long lastFileSize = 0;
+        private long lastReadLength = 0;
 
         public LogDisplay(VisualElement baseElement) {
             root = baseElement;
@@ -76,59 +76,13 @@ namespace com.bitwesgames
         }
 
 
-        /**
-         * This will read the entire file and add any lines that do not exist
-         * already to the scrollView.  To refresh the contents completely
-         * call scrollView.Clear() BEFORE calling this.
-         */
-        private void LoadFileAsLabels(string path) {
-            IEnumerable<string> lines = File.ReadLines(path);
-            var line_count = 0;
-            var cur_line_count = scrollView.childCount;
-            linesRead = 0;
-            foreach (string line in lines) {
-                line_count += 1;
-                linesRead += 1;
-                if (line_count > cur_line_count) {
-                    AddLineToBuffer(line);
-                }
-            }
-            FlushLineBuffer();
-            UpdateTimestamps();
-            UpdateTitle();
-        }
-
-
         private void UpdateTitle() {
-            string changeTimeDisplay = lastFileChangeTime.ToLocalTime().ToString();
-            if (lastFileChangeTime == DateTime.MinValue) {
-                changeTimeDisplay = "File not found";
-            }
-            title.text = $"{Path.GetFileName(logPath)} ({changeTimeDisplay}) {linesRead} lines";
-        }
-
-        private void UpdateTimestamps() {
-            lastFileChangeTime = File.GetLastWriteTimeUtc(logPath);
-
-        }
-
-
-        /**
-         * Clears the text and loads a file
-         */
-        public void LoadLog(string path) {
-            logPath = path;
-
-            scrollView.Clear();
-            if (File.Exists(path)) {
-                LoadFileAsLabels(path);
+            if(logPath == string.Empty){
+                title.text = "<no log file specified>";
             } else {
-                AddLine("File not found");
-                UpdateTitle();
+                title.text = $"{Path.GetFileName(logPath)}";
             }
-            ScrollToBottom();
         }
-
 
         public void ScrollToBottom() {
             vertScroll.value = vertScroll.highValue;
@@ -142,36 +96,74 @@ namespace com.bitwesgames
         }
 
 
-        public bool HasLogFileChanged() {
-            bool toReturn = false;
-            if (logPath != string.Empty && File.Exists(logPath)) {
-                if (lastFileChangeTime == null) {
-                    toReturn = true;
-                } else {
-                    toReturn = File.GetLastWriteTimeUtc(logPath) != lastFileChangeTime;
+
+        public void TailFile(string filePath){
+            logPath = filePath;
+            scrollView.Clear();
+            if (File.Exists(logPath)) {
+                lastReadLength = 0;
+                ReadToEndAndAddToDisplay();
+            } else {
+                AddLine("File not found");
+            }
+            UpdateTitle();
+        }
+
+
+        private string ReadToEnd(){
+            string toReturn = "";
+            try{
+                long fileSize = new FileInfo(logPath).Length;
+                if (fileSize > lastReadLength) {
+                    using (var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+                        fs.Seek(lastReadLength, SeekOrigin.Begin);
+                        var buffer = new byte[1024];
+
+                        bool foundData = true;
+                        while (foundData) {
+                            var bytesRead = fs.Read(buffer, 0, buffer.Length);
+                            lastReadLength += bytesRead;
+                            foundData = bytesRead != 0;
+                            if(foundData){
+                                toReturn += ASCIIEncoding.ASCII.GetString(buffer, 0, bytesRead);
+                            }
+                        }
+                    }
                 }
             }
+            catch { }
 
             return toReturn;
         }
 
 
-        /**
-         * Only clears the text if the creation time is different.
-         */
-        public void RefreshLog() {
-            if (HasLogFileChanged()) {
-                // Could not get good data for the creation time of a file so
-                // we reload the whole thing if it's been 5 seconds or more
-                // since the last time we loaded any of the file.  This
-                // stops excessive Clear calls during AutoRefresh.
-                TimeSpan minTime = new TimeSpan(0, 0, 5);
-                TimeSpan diff = File.GetLastWriteTimeUtc(logPath).Subtract(lastFileChangeTime);
-                if (diff > minTime) {
-                    scrollView.Clear();
+        private void ReadToEndAndAddToDisplay(){
+            long fileSize = new FileInfo(logPath).Length;
+            if(fileSize < lastFileSize){
+                scrollView.Clear();
+                lastReadLength = 0;
+            }
+            lastFileSize = fileSize;
+
+            string data = ReadToEnd();
+            if(data.Length != 0){
+                string[] lines = data.Split("\n");
+                foreach (string line in lines){
+                    AddLineToBuffer(line);
                 }
-                LoadFileAsLabels(logPath);
+                FlushLineBuffer();
                 ScrollToBottom();
+            }
+        }
+
+
+        public void CallMeInUpdate(){
+            if(logPath != string.Empty && File.Exists(logPath)){
+                ReadToEndAndAddToDisplay();
+            } else{
+                scrollView.Clear();
+                UpdateTitle();
+                AddLine("File not found");
             }
         }
     }
