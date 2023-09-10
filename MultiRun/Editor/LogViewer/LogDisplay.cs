@@ -9,9 +9,12 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 
-namespace com.bitwesgames
+namespace Bitwesgames
 {
     public class LogDisplay {
+        public int readSize = 1024;
+        public int maxStringSize = 10000;
+
         // -- Controls --
         public VisualElement root;
         public Label title;
@@ -29,6 +32,7 @@ namespace com.bitwesgames
         private Label curLabel = null;
         private int labelCharLimit = 2000;
 
+
         public LogDisplay(VisualElement baseElement) {
             root = baseElement;
             title = root.Query<Label>("Title").First();
@@ -37,6 +41,8 @@ namespace com.bitwesgames
             horizScroll = root.Query<ScrollView>().First().horizontalScroller;
             btnMaximize = root.Query<ToolbarButton>("Maximize").First();
             scrollView = root.Query<ScrollView>().First();
+
+            Clear();
         }
 
 
@@ -48,15 +54,11 @@ namespace com.bitwesgames
             }
         }
 
+
         private Label AddLabel(string text){
             var lbl = new Label(text);
             scrollView.Add(lbl);
             return lbl;
-        }
-
-        private void AddLine(string text) {
-            var lbl = new Label(text);
-            scrollView.Add(lbl);
         }
 
 
@@ -68,6 +70,7 @@ namespace com.bitwesgames
             }
         }
 
+
         /*
          * Adapted from https://stackoverflow.com/questions/3791103/c-sharp-continuously-read-file
          */
@@ -77,7 +80,7 @@ namespace com.bitwesgames
                 if (fileSize > lastReadLength) {
                     using (var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
                         fs.Seek(lastReadLength, SeekOrigin.Begin);
-                        var buffer = new byte[1024];
+                        var buffer = new byte[readSize];
 
                         bool foundData = true;
                         while (foundData) {
@@ -85,7 +88,7 @@ namespace com.bitwesgames
                             lastReadLength += bytesRead;
                             foundData = bytesRead != 0;
                             if(foundData){
-                                AddTextToBuffer(ASCIIEncoding.ASCII.GetString(buffer, 0, bytesRead));
+                                AddLine(ASCIIEncoding.ASCII.GetString(buffer, 0, bytesRead));
                             }
                         }
                     }
@@ -95,10 +98,21 @@ namespace com.bitwesgames
         }
 
 
+        private int FindLastCharBefore(string source, string search, int cutOff){
+            int result = source.IndexOf("\n");
+            int toReturn = result;
+            while(result != -1 && result < cutOff){
+                toReturn = result;
+                result = source.IndexOf("\n", result + 1);
+            }
+            return toReturn;
+        }
+
+
         private void UpdateLogContents(){
             long fileSize = new FileInfo(logPath).Length;
             if(fileSize < lastFileSize){
-                scrollView.Clear();
+                Clear();
                 lastReadLength = 0;
             }
             lastFileSize = fileSize;
@@ -120,7 +134,7 @@ namespace com.bitwesgames
 
         public void TailFile(string filePath){
             logPath = filePath;
-            scrollView.Clear();
+            Clear();
             if (File.Exists(logPath)) {
                 lastReadLength = 0;
                 UpdateLogContents();
@@ -135,10 +149,51 @@ namespace com.bitwesgames
             if(logPath != string.Empty && File.Exists(logPath)){
                 UpdateLogContents();
             } else{
-                scrollView.Clear();
+                Clear();
                 UpdateTitle();
                 AddLine("File not found");
             }
         }
+
+
+        public string GetText(){
+            var toReturn = "";
+            var entryCount = 0;
+            foreach(Label entry in scrollView.Children()){
+                if(entryCount == 0){
+                    toReturn = entry.text;
+                }else{
+                    toReturn += "\n" + entry.text;
+                }
+                entryCount += 1;
+            }
+            return toReturn;
+        }
+
+
+        public void Clear(){
+            scrollView.Clear();
+        }
+
+
+        public void AddLine(string text) {
+            if(text.Length > maxStringSize) {
+                int lastNewline = FindLastCharBefore(text, "\n", maxStringSize);
+                int splitAt = lastNewline;
+                int otherSplit = splitAt + 1;
+                if(splitAt == -1){
+                    splitAt = maxStringSize;
+                    otherSplit = maxStringSize;
+                }
+                string toAdd = text.Substring(0, splitAt);
+                AddLabel(toAdd);
+
+                string doAgain = text.Substring(otherSplit);
+                AddLine(doAgain);
+            } else {
+                AddLabel(text);
+            }
+        }
+
     }
 }

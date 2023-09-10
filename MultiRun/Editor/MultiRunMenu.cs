@@ -7,8 +7,8 @@ using UnityEngine;
 
 
 
-namespace com.bitwesgames {
-    
+namespace Bitwesgames {
+
 
     [InitializeOnLoadAttribute]
     public static class MultiRunMenu{
@@ -17,7 +17,7 @@ namespace com.bitwesgames {
 
 
         private static void ShowLogs() {
-            var window = EditorWindow.GetWindow<com.bitwesgames.LogViewer>();
+            var window = EditorWindow.GetWindow<Bitwesgames.LogViewer>();
             window.basePath = Path.Join(Path.GetDirectoryName(mre.buildPath), Path.GetFileNameWithoutExtension(mre.buildPath));
             window.ShowPopup();
             window.LoadLogs();

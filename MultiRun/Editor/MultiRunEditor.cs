@@ -5,7 +5,7 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace com.bitwesgames {
+namespace Bitwesgames {
 
     public class MultiRunEditor{
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
@@ -30,7 +30,7 @@ namespace com.bitwesgames {
                 {
                     EditorPrefs.SetString(PREF_BUILD_PATH, string.Empty);
                     Debug.LogError($"Invalid build path:  {value}");
-                }               
+                }
             }
         }
 
@@ -104,7 +104,7 @@ namespace com.bitwesgames {
         }
 
 
-        public void BuildThenRunX(int x = 1, bool runCurrentScene = false) {           
+        public void BuildThenRunX(int x = 1, bool runCurrentScene = false) {
             if (buildPath != string.Empty) {
                 bool result = Build(buildPath, runCurrentScene);
                 if (result) {
@@ -115,7 +115,7 @@ namespace com.bitwesgames {
 
 
         /*
-         * Prompts the user for a path to a file.  Can optionally provide the 
+         * Prompts the user for a path to a file.  Can optionally provide the
          * current path that is being used.
          *
          * This will set the the BUILD_PATH_PREF editor preference value to what

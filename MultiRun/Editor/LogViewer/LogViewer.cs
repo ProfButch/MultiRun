@@ -8,7 +8,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace com.bitwesgames
+namespace Bitwesgames
 {
     public class LogViewer : EditorWindow
     {

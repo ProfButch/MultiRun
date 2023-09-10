@@ -5,7 +5,7 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEditor.SceneManagement;
 
-namespace com.bitwesgames {
+namespace Bitwesgames {
     public class OsHelper
     {
         const string MODE_NONE = "none";

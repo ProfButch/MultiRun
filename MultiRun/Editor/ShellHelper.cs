@@ -13,7 +13,7 @@ using System.Diagnostics;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace com.bitwesgames
+namespace Bitwesgames
 {
     public class ShellHelper
     {
