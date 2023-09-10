@@ -29,9 +29,6 @@ namespace Bitwesgames
         private long lastFileSize = 0;
         private long lastReadLength = 0;
 
-        private Label curLabel = null;
-        private int labelCharLimit = 2000;
-
 
         public LogDisplay(VisualElement baseElement) {
             root = baseElement;
@@ -43,15 +40,6 @@ namespace Bitwesgames
             scrollView = root.Query<ScrollView>().First();
 
             Clear();
-        }
-
-
-        private void AddTextToBuffer(string text) {
-            if(curLabel == null || text.Length + curLabel.text.Length > labelCharLimit){
-                curLabel = AddLabel(text);
-            } else {
-                curLabel.text += text;
-            }
         }
 
 
@@ -179,17 +167,22 @@ namespace Bitwesgames
         public void AddLine(string text) {
             if(text.Length > maxStringSize) {
                 int lastNewline = FindLastCharBefore(text, "\n", maxStringSize);
-                int splitAt = lastNewline;
-                int otherSplit = splitAt + 1;
-                if(splitAt == -1){
-                    splitAt = maxStringSize;
-                    otherSplit = maxStringSize;
+                int splitAt = maxStringSize;
+                int otherSplit = maxStringSize;
+                string contEnd = "";
+                string contStart = "";
+
+                if(lastNewline != -1){
+                    splitAt = lastNewline;
+                    otherSplit = lastNewline + 1;
+                    contEnd = " cont->";
+                    contStart = "[cont] ";
                 }
                 string toAdd = text.Substring(0, splitAt);
-                AddLabel(toAdd);
+                AddLabel(toAdd + contEnd);
 
                 string doAgain = text.Substring(otherSplit);
-                AddLine(doAgain);
+                AddLine(contStart + doAgain);
             } else {
                 AddLabel(text);
             }
