@@ -169,20 +169,16 @@ namespace Bitwesgames
                 int lastNewline = FindLastCharBefore(text, "\n", maxStringSize);
                 int splitAt = maxStringSize;
                 int otherSplit = maxStringSize;
-                string contEnd = "";
-                string contStart = "";
 
                 if(lastNewline != -1){
                     splitAt = lastNewline;
                     otherSplit = lastNewline + 1;
-                    contEnd = " cont->";
-                    contStart = "[cont] ";
                 }
                 string toAdd = text.Substring(0, splitAt);
-                AddLabel(toAdd + contEnd);
+                AddLabel(toAdd);
 
                 string doAgain = text.Substring(otherSplit);
-                AddLine(contStart + doAgain);
+                AddLine(doAgain);
             } else {
                 AddLabel(text);
             }
