@@ -36,22 +36,18 @@ namespace Bitwesgames
                 root.UnCollapse();
                 which.root.visible = should;
 
-                if (!leftLog.root.visible)
-                {
+                if (!leftLog.root.visible) {
                     root.CollapseChild(0);
                 }
 
-                if (!rightLog.root.visible)
-                {
+                if (!rightLog.root.visible) {
                     root.CollapseChild(1);
                 }
             }
 
-            public void showOnlyLog(LogDisplay which)
-            {
+            public void showOnlyLog(LogDisplay which) {
                 LogDisplay other = leftLog;
-                if(which == leftLog)
-                {
+                if(which == leftLog) {
                     other = rightLog;
                 }
 
@@ -59,8 +55,7 @@ namespace Bitwesgames
                 showLog(other, false);
             }
 
-            public bool AreAllLogsHidden()
-            {
+            public bool AreAllLogsHidden() {
                 return !leftLog.root.visible && !rightLog.root.visible;
             }
 
@@ -80,6 +75,8 @@ namespace Bitwesgames
         private ToolbarToggle[] showLogButtons = new ToolbarToggle[4];
         private ToolbarToggle tglAutoRefresh;
         private ToolbarButton btnRefresh;
+        private ToolbarButton btnIncreaseFontSize;
+        private ToolbarButton btnDecreaseFontSize;
 
         private bool autoRefresh = true;
         private float refreshInterval = 1.0f;
@@ -191,6 +188,11 @@ namespace Bitwesgames
             showLogButtons[2] = rootVisualElement.Query<ToolbarToggle>("ShowLog3").First();
             showLogButtons[3] = rootVisualElement.Query<ToolbarToggle>("ShowLog4").First();
 
+            btnDecreaseFontSize = toolbar.Query<ToolbarButton>("FontSizeDown").First();
+            btnDecreaseFontSize.clicked += OnDecreaseFontSizePressed;
+            btnIncreaseFontSize = toolbar.Query<ToolbarButton>("FontSizeUp").First();
+            btnIncreaseFontSize.clicked += OnIncreaseFontSizePressed;
+
             SetupMaximizeButton(topSplit.leftLog, 0);
             SetupMaximizeButton(topSplit.rightLog, 1);
             SetupMaximizeButton(botSplit.leftLog, 2);
@@ -273,10 +275,28 @@ namespace Bitwesgames
             autoRefresh = changeEvent.newValue;
         }
 
+        private void OnIncreaseFontSizePressed()
+        {
+            IncrementFontSizes(1.0f);
+        }
+
+        private void OnDecreaseFontSizePressed()
+        {
+            IncrementFontSizes(-1.0f);
+        }
+
 
         // ----------------------
         // Public
         // ----------------------
+        public void IncrementFontSizes(float howMuch)
+        {
+            topSplit.leftLog.IncrementFontSize(howMuch);
+            topSplit.rightLog.IncrementFontSize(howMuch);
+            botSplit.leftLog.IncrementFontSize(howMuch);
+            botSplit.rightLog.IncrementFontSize(howMuch);
+        }
+
         public void LoadLogs()
         {
             lblInfo.text = basePath;

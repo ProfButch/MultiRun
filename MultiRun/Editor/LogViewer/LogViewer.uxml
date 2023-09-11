@@ -7,6 +7,9 @@
         <uie:ToolbarToggle focusable="false" value="true" name="ShowLog3" text="Log 3" tooltip="Show/Hide Log 3" style="flex-shrink: 1;" />
         <uie:ToolbarToggle focusable="false" value="true" name="ShowLog4" text="Log 4" tooltip="Show/Hide Log 4" style="flex-shrink: 1;" />
         <uie:ToolbarSpacer style="flex-grow: 1;" />
+        <uie:ToolbarButton text="+" display-tooltip-when-elided="true" name="FontSizeUp" />
+        <uie:ToolbarButton text="-" display-tooltip-when-elided="true" name="FontSizeDown" enable-rich-text="false" />
+        <uie:ToolbarSpacer style="flex-grow: 1;" />
         <uie:ToolbarToggle focusable="false" text="Auto Refresh" name="AutoRefresh" tooltip="When enabled, logs will refresh every second (if they have changed)" value="false" />
         <uie:ToolbarButton text="Refresh" display-tooltip-when-elided="true" name="Refresh" tooltip="Refresh all log displays." />
     </uie:Toolbar>

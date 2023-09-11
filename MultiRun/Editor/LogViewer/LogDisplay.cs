@@ -45,6 +45,7 @@ namespace Bitwesgames
 
         private Label AddLabel(string text){
             var lbl = new Label(text);
+            //lbl.GetComponent<Text>().font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
             scrollView.Add(lbl);
             return lbl;
         }
@@ -127,7 +128,7 @@ namespace Bitwesgames
                 lastReadLength = 0;
                 UpdateLogContents();
             } else {
-                AddLine("File not found");
+                AddLine("\n\nFile not found\n\n");
             }
             UpdateTitle();
         }
@@ -139,7 +140,7 @@ namespace Bitwesgames
             } else{
                 Clear();
                 UpdateTitle();
-                AddLine("File not found");
+                AddLine("\n\nFile not found\n\n");
             }
         }
 
@@ -184,5 +185,20 @@ namespace Bitwesgames
             }
         }
 
+
+        public void SetFontSize(float newSize) {
+            float adjustedSize = Math.Clamp(newSize, 5.0f, 50.0f);
+            scrollView.style.fontSize = adjustedSize;
+        }
+
+
+        public void IncrementFontSize(float howMuch) {
+            SetFontSize(GetFontSize() + howMuch);
+        }
+
+
+        public float GetFontSize() {            
+            return scrollView.resolvedStyle.fontSize;
+        }
     }
 }
