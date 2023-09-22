@@ -21,6 +21,7 @@ namespace Bitwesgames
             public TwoPaneSplitView root;
             public LogDisplay leftLog;
             public LogDisplay rightLog;
+            public VisualElement dragLine;
 
 
             public LogSplit(TwoPaneSplitView baseElement)
@@ -28,6 +29,7 @@ namespace Bitwesgames
                 root = baseElement;
                 leftLog = new LogDisplay(root.Query<VisualElement>("LeftLog").First());
                 rightLog = new LogDisplay(root.Query<VisualElement>("RightLog").First());
+                dragLine = root.Query<VisualElement>("unity-dragline-anchor").First();               
             }
 
 
@@ -58,6 +60,20 @@ namespace Bitwesgames
             public bool AreAllLogsHidden() {
                 return !leftLog.root.visible && !rightLog.root.visible;
             }
+
+
+            public bool IsALogHidden()
+            {
+                return !AreAllLogsVisible();
+            }
+
+
+            public bool AreAllLogsVisible()
+            {
+                return leftLog.root.visible &&
+                    rightLog.root.visible;
+            }
+
 
             public void ReadLogs(){
                 leftLog.CallMeInUpdate();
@@ -104,6 +120,9 @@ namespace Bitwesgames
             mainSplit.fixedPaneInitialDimension = mainSplit.resolvedStyle.height / 2.0f;
             topSplit.root.fixedPaneInitialDimension = topSplit.root.resolvedStyle.width / 2.0f;
             botSplit.root.fixedPaneInitialDimension = botSplit.root.resolvedStyle.width / 2.0f;
+
+            topSplit.root.fixedPane.RegisterCallback<GeometryChangedEvent>(OnTopLeftResized);
+            botSplit.root.fixedPane.RegisterCallback<GeometryChangedEvent>(OnBotLeftResized);
         }
 
 
@@ -119,8 +138,7 @@ namespace Bitwesgames
                 _is_first_update_call = false;
             }
 
-            if (_should_scroll_to_bottom)
-            {
+            if (_should_scroll_to_bottom) {
                 topSplit.leftLog.ScrollToBottom();
                 topSplit.rightLog.ScrollToBottom();
                 _should_scroll_to_bottom = false;
@@ -223,9 +241,32 @@ namespace Bitwesgames
         }
 
 
+        private void MatchVSplit(LogSplit matchThis, LogSplit toThis)
+        {
+            var newWidth = toThis.root.fixedPane.style.width;
+            matchThis.root.fixedPane.style.width = newWidth;
+            matchThis.dragLine.style.left = newWidth;
+        }
+
+
         // ----------------------
         // Events
         // ----------------------
+        private void OnTopLeftResized(GeometryChangedEvent e) {
+            if (botSplit.AreAllLogsVisible() && topSplit.AreAllLogsVisible()) {
+                MatchVSplit(botSplit, topSplit);
+            }
+        }
+
+
+        private void OnBotLeftResized(GeometryChangedEvent e)
+        {
+            if (topSplit.AreAllLogsVisible() && botSplit.AreAllLogsVisible()) {
+                MatchVSplit(topSplit, botSplit);
+            }
+        }
+
+
         private void OnRootResized(GeometryChangedEvent e)
         {
             // I hate UI Builder.  For some reason, everything looks and acts
