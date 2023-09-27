@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Template name="IndividualRunSettings" src="project://database/Packages/com.bitwesgames.multirun/Editor/IndividualRunSettings.uxml?fileID=9197481963319205126&amp;guid=322861579a27a495bb94134e27df9589&amp;type=3#IndividualRunSettings" />
+    <ui:Label text="All" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center;" />
+    <ui:Instance template="IndividualRunSettings" name="IndividualRunSettings" />
+    <ui:Label text="1" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center;" />
+    <ui:Instance template="IndividualRunSettings" name="IndividualRunSettings" />
+    <ui:Label text="2" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center;" />
+    <ui:Instance template="IndividualRunSettings" name="IndividualRunSettings" />
+    <ui:Label text="3" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center;" />
+    <ui:Instance template="IndividualRunSettings" name="IndividualRunSettings" />
+    <ui:Label text="4" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center;" />
+    <ui:Instance template="IndividualRunSettings" name="IndividualRunSettings" />
+</ui:UXML>

@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="IndvRunSettings">
+        <ui:Label text="Arguments" display-tooltip-when-elided="true" />
+        <ui:TextField picking-mode="Ignore" name="CliArgs" />
+    </ui:VisualElement>
+</ui:UXML>
