@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using MultiRun;
 
-
 public class TestScene : MonoBehaviour
 {
     float logTime = 1.0f;
@@ -13,6 +12,9 @@ public class TestScene : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        WindowPositioner.MoveWindow();
+        CommandLineParser p = new CommandLineParser();
+        Debug.Log(p.ToString());
         //var thing = new Bitwesgames.LogDisplay(new UnityEngine.UIElements.VisualElement());
     }
 
