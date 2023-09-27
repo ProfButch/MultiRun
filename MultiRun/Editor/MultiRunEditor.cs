@@ -6,6 +6,9 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Bitwesgames {
+    // !! ScriptableSingleton for saving settings per project.
+    //    It also might be useful for preventing reload of
+    //    the gui after compilation:  "survives assembly reloading in the Editor."
 
     public class MultiRunEditor{
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
