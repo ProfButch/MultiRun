@@ -36,6 +36,13 @@ namespace Bitwesgames {
             }
         }
 
+        [MenuItem("MultiRun/Run Settings", false, 1)]
+        private static void MnuRunSettings()
+        {
+            var window = EditorWindow.GetWindow<Bitwesgames.RunSettings>();
+            window.ShowPopup();
+        }
+
 
         //--------------------------------
         // Section 100
