@@ -82,8 +82,8 @@ namespace Bitwesgames {
         }
 
 
-        public void RunBuild(string path, string logfile = null) {
-            string cmd = osHelper.RunBuildCommand(path, logfile);
+        public void RunBuild(string path, string logfile, string args) {
+            string cmd = osHelper.RunBuildCommand(path, logfile, args);
             Debug.Log($"[running]:  {cmd}");
             ShellHelper.ProcessCommand(cmd, "/");
         }
@@ -91,15 +91,30 @@ namespace Bitwesgames {
 
         public void RunBuild(string path) {
             string logPath = makeLogNameFromPath(path);
-            RunBuild(path, logPath);
+            RunBuild(path, logPath, "");
         }
 
 
         public void RunBuildXTimes(int x = 1) {
             string curPath = buildPath;
+
             if (curPath != string.Empty) {
                 for (int i = 0; i < x; i++) {
-                    RunBuild(curPath, makeLogNameFromPath(curPath, $"_{i + 1}"));
+                    string moreArgs = "";
+                    if(i == 0)
+                    {
+                        moreArgs = "-mr-arrangement tl";
+                    }else if(i == 1)
+                    {
+                        moreArgs = "-mr-arrangement tr";
+                    } else if(i == 2)
+                    {
+                        moreArgs = "-mr-arrangement bl";
+                    } else if(i == 3)
+                    {
+                        moreArgs = "-mr-arrangement br";
+                    }
+                    RunBuild(curPath, makeLogNameFromPath(curPath, $"_{i + 1}"), moreArgs);
                 }
             } else {
                 Debug.LogWarning("Cannot run, build path not set.");

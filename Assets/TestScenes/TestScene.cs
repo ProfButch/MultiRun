@@ -12,10 +12,6 @@ public class TestScene : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        WindowPositioner.MoveWindow();
-        CommandLineParser p = new CommandLineParser();
-        Debug.Log(p.ToString());
-        //var thing = new Bitwesgames.LogDisplay(new UnityEngine.UIElements.VisualElement());
     }
 
 

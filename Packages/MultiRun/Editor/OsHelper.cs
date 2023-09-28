@@ -40,7 +40,7 @@ namespace Bitwesgames {
             defaultBuildPath = "~/temp/unity_builds/TheBuild.app";
         }
 
-        private string RunBuildCmdWin(string path, string log)
+        private string RunBuildCmdWin(string path, string log, string args)
         {
             // In windows, you have to give it the full path to where the log should
             // go, it isn't cool like OSX.  So we have to construct the full path from
@@ -48,29 +48,29 @@ namespace Bitwesgames {
             string logPath = Path.GetDirectoryName(path);
             string fullLogPath = Path.Join(logPath, log);
 
-            return $"{path} --logfile {fullLogPath}";
+            return $"{path} --logfile {fullLogPath} {args}";
         }
 
-        private string RunBuildCmdOsx(string path, string log)
+        private string RunBuildCmdOsx(string path, string log, string args)
         {
             // Uses open to launch the app so we do not have to know where the actual
             // executable is inside the .app bundle.  This also sets the logfile to
             // be the <app name>.log or whatever is specified in logfile.  The log
             // will be in the same directory as the applicaiton.  Each new run
             // overwrites the existing log file if it exists.
-            return $"open -n {path} --args --logfile {log}";
+            return $"open -n {path} --args --logfile {log} {args}";
         }
 
-        public string RunBuildCommand(string path, string log)
+        public string RunBuildCommand(string path, string log, string adtlArgs = "")
         {
             string toReturn = "";
             if (mode == MODE_WIN)
             {
-                toReturn = RunBuildCmdWin(path, log);
+                toReturn = RunBuildCmdWin(path, log, adtlArgs);
             }
             else if (mode == MODE_OSX)
             {
-                toReturn = RunBuildCmdOsx(path, log);
+                toReturn = RunBuildCmdOsx(path, log, adtlArgs);
             }
             return toReturn;
         }
