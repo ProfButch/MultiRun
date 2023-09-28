@@ -2,32 +2,42 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MultiRun
+namespace MultiRun.Cli
 {
-    public class CommandLineParser
+    public static class ArgDef
     {
-        public bool disableDebugLogStackTrace = false;
+        public const string ARG_WINDOW_ARRANGEMENT = "window_arrangement";
+        public const string ARG_DISABLE_LOG_STACK_TRACE = "disable_log_stack_trace";
 
-        public bool resizeWindow = false;
-        public int windowWidth = -1;
-        public int windowHeight = -1;
-        
-        public bool moveWindow = false;
-        public int windowX = -1;
-        public int windowY = -1;
+        const string PREFIX = "-mr_";
 
-        public string windowArrangement = WindowPositioner.ARRANGE_NONE;
+        private static Dictionary<string, object> argDefaults = new Dictionary<string, object>() {
+            {ARG_WINDOW_ARRANGEMENT, WindowPositioner.ARRANGE_NONE },
+            {ARG_DISABLE_LOG_STACK_TRACE, false }
+        };
 
 
-        private Dictionary<string, string> cliArgs;
+        public static string MakeArgString(Dictionary<string, object> args) {
+            string toReturn = "";
+            bool nonNoneArrangement = false;
+            foreach(string key in args.Keys) {
+                string argName = ArgName(key);
+                string argValue = GetArgValue<string>(args, key, "");
 
-        public CommandLineParser()
-        {
-            cliArgs = GetCommandlineArgs();
-            SetValuesFromCommandLineArgs(cliArgs);
+                toReturn += $"{argName} {argValue} ";
+                if(key == ARG_WINDOW_ARRANGEMENT && argValue != WindowPositioner.ARRANGE_NONE) {
+                    nonNoneArrangement = true;
+                }
+            }
+
+            if (nonNoneArrangement) {
+                toReturn += "-screen-fullscreen 0 ";
+            }
+            return toReturn;
         }
 
-        private T GetArgValue<T>(Dictionary<string, string> d, string key, T defaultValue) {
+
+        public static T GetArgValue<T>(Dictionary<string, string> d, string key, T defaultValue) {
             T toReturn = defaultValue;
             if (d.ContainsKey(key)) {
                 toReturn = (T)Convert.ChangeType(d[key], typeof(T));
@@ -36,11 +46,40 @@ namespace MultiRun
         }
 
 
-        private void SetValuesFromCommandLineArgs(Dictionary<string, string> args)
-        {
-            windowArrangement = GetArgValue<string>(args, "-mr-arrangement", windowArrangement);
+        public static T GetArgValue<T>(Dictionary<string, object> d, string key, T defaultValue) {
+            T toReturn = defaultValue;
+            if (d.ContainsKey(key)) {
+                toReturn = (T)Convert.ChangeType(d[key], typeof(T));
+            }
+            return toReturn;
         }
 
+
+        public static string ArgName(string baseName) {
+            return $"{PREFIX}{baseName}";
+        }
+    }
+
+
+    public class Parser {
+        public bool disableDebugLogStackTrace = false;
+        public string windowArrangement = WindowPositioner.ARRANGE_NONE;
+
+
+        private Dictionary<string, string> cliArgs;
+
+
+        public Parser() {
+            Parse();
+        }
+
+
+        private void SetValuesFromCommandLineArgs(Dictionary<string, string> args) {
+            windowArrangement = ArgDef.GetArgValue<string>(
+                args,
+                ArgDef.ArgName(ArgDef.ARG_WINDOW_ARRANGEMENT),
+                windowArrangement);
+        }
 
 
         private Dictionary<string, string> GetCommandlineArgs() {
@@ -75,6 +114,12 @@ namespace MultiRun
         public string GetArgumentString()
         {
             return "";
+        }
+
+
+        public void Parse() {
+            cliArgs = GetCommandlineArgs();
+            SetValuesFromCommandLineArgs(cliArgs);
         }
     }
 }

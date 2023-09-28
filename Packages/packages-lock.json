@@ -6,12 +6,6 @@
       "source": "embedded",
       "dependencies": {}
     },
-    "com.example.mypackage": {
-      "version": "file:MyPackage",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
     "com.unity.2d.animation": {
       "version": "7.0.11",
       "depth": 1,

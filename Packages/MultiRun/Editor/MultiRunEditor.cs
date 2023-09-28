@@ -4,7 +4,8 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-
+using MultiRun;
+using MultiRun.Cli;
 namespace Bitwesgames {
     // !! ScriptableSingleton for saving settings per project.
     //    It also might be useful for preventing reload of
@@ -100,20 +101,20 @@ namespace Bitwesgames {
 
             if (curPath != string.Empty) {
                 for (int i = 0; i < x; i++) {
-                    string moreArgs = "";
-                    if(i == 0)
-                    {
-                        moreArgs = $"-screen-fullscreen 0 -mr-arrangement {MultiRun.WindowPositioner.ARRANGE_TOP_LEFT}";
-                    }else if(i == 1)
-                    {
-                        moreArgs = "-screen-fullscreen 0 -mr-arrangement tr";
-                    } else if(i == 2)
-                    {
-                        moreArgs = "-screen-fullscreen 0 -mr-arrangement bl";
-                    } else if(i == 3)
-                    {
-                        moreArgs = "-screen-fullscreen 0 -mr-arrangement br";
+                    Dictionary<string, object> args = new Dictionary<string, object>();                    
+
+                    if (i == 0) {
+                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_LEFT;
+                    }else if(i == 1) {
+                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_RIGHT;
+                    } else if(i == 2) {
+                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_BOTTOM_LEFT;
+                    } else if(i == 3) {
+                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_BOTTOM_RIGHT;
                     }
+
+                    string moreArgs = ArgDef.MakeArgString(args);                   
+                    Debug.Log(moreArgs);
                     RunBuild(curPath, makeLogNameFromPath(curPath, $"_{i + 1}"), moreArgs);
                 }
             } else {
