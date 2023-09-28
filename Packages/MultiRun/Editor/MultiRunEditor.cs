@@ -113,6 +113,7 @@ namespace Bitwesgames {
                         args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_BOTTOM_RIGHT;
                     }
 
+                    args[ArgDef.ARG_DISABLE_LOG_STACK_TRACE] = true;
                     string moreArgs = ArgDef.MakeArgString(args);                   
                     Debug.Log(moreArgs);
                     RunBuild(curPath, makeLogNameFromPath(curPath, $"_{i + 1}"), moreArgs);

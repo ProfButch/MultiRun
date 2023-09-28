@@ -17,6 +17,7 @@ namespace MultiRun
             Screen.MoveMainWindowTo(displays[0], new Vector2Int(x, y));
         }
 
+
         public static void ArrangeWindow(string arrange)
         {
             List<DisplayInfo> displays = new List<DisplayInfo>();
@@ -42,7 +43,6 @@ namespace MultiRun
             }
 
             if(pos.x != -1) {
-                Debug.Log($"Moving to {pos}");
                 Screen.MoveMainWindowTo(selectedDisplay, pos);
                 Screen.SetResolution(w / 2, h / 2, false);
             }

@@ -10,11 +10,12 @@ namespace MultiRun
        
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void InitializeOnLoad()
-        {
-            Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);            
+        {            
             cmdArgs = new Cli.Parser();
-            Debug.Log(cmdArgs.ToString());
             WindowPositioner.ArrangeWindow(cmdArgs.windowArrangement);
+            if (cmdArgs.disableDebugLogStackTrace) {
+                Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+            }
         }
     }
 }

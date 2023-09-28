@@ -24,7 +24,12 @@ namespace MultiRun.Cli
                 string argName = ArgName(key);
                 string argValue = GetArgValue<string>(args, key, "");
 
-                toReturn += $"{argName} {argValue} ";
+                if(key == ARG_DISABLE_LOG_STACK_TRACE) {
+                    toReturn += $"{argName} ";
+                } else {
+                    toReturn += $"{argName} {argValue} ";
+                }
+                
                 if(key == ARG_WINDOW_ARRANGEMENT && argValue != WindowPositioner.ARRANGE_NONE) {
                     nonNoneArrangement = true;
                 }
@@ -33,6 +38,7 @@ namespace MultiRun.Cli
             if (nonNoneArrangement) {
                 toReturn += "-screen-fullscreen 0 ";
             }
+
             return toReturn;
         }
 
@@ -65,7 +71,6 @@ namespace MultiRun.Cli
         public bool disableDebugLogStackTrace = false;
         public string windowArrangement = WindowPositioner.ARRANGE_NONE;
 
-
         private Dictionary<string, string> cliArgs;
 
 
@@ -79,13 +84,11 @@ namespace MultiRun.Cli
                 args,
                 ArgDef.ArgName(ArgDef.ARG_WINDOW_ARRANGEMENT),
                 windowArrangement);
+            disableDebugLogStackTrace = args.ContainsKey(ArgDef.ArgName(ArgDef.ARG_DISABLE_LOG_STACK_TRACE));
         }
 
-
-        private Dictionary<string, string> GetCommandlineArgs() {
+        private Dictionary<string, string> ArgsToDictionary(string[] args) {
             Dictionary<string, string> argDictionary = new Dictionary<string, string>();
-
-            var args = System.Environment.GetCommandLineArgs();
 
             for (int i = 0; i < args.Length; ++i) {
                 var arg = args[i].ToLower();
@@ -97,6 +100,13 @@ namespace MultiRun.Cli
                 }
             }
             return argDictionary;
+
+        }
+
+
+        private Dictionary<string, string> ArgsToDictionary() {
+            var args = System.Environment.GetCommandLineArgs();
+            return ArgsToDictionary(args);
         }
 
 
@@ -118,7 +128,16 @@ namespace MultiRun.Cli
 
 
         public void Parse() {
-            cliArgs = GetCommandlineArgs();
+            cliArgs = ArgsToDictionary();
+            SetValuesFromCommandLineArgs(cliArgs);
+        }
+
+        public void Parse(string args) {
+            string[] splitArgs = args.Split("\n");
+            for(int i = 0; i < splitArgs.Length; i++) {
+                splitArgs[i] = splitArgs[i].Trim();
+            }
+            cliArgs = ArgsToDictionary(splitArgs);
             SetValuesFromCommandLineArgs(cliArgs);
         }
     }
