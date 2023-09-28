@@ -24,7 +24,7 @@ namespace MultiRun
 
             DisplayInfo selectedDisplay = displays[0];
             int w = selectedDisplay.width;
-            int h = selectedDisplay.height;
+            int h = selectedDisplay.height;            
 
             Vector2Int pos = new Vector2Int(-1, -1);
             if(arrange == ARRANGE_TOP_LEFT) {
@@ -44,6 +44,7 @@ namespace MultiRun
             if(pos.x != -1) {
                 Debug.Log($"Moving to {pos}");
                 Screen.MoveMainWindowTo(selectedDisplay, pos);
+                Screen.SetResolution(w / 2, h / 2, false);
             }
             
         }

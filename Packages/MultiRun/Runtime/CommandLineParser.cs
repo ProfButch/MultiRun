@@ -6,7 +6,6 @@ namespace MultiRun
 {
     public class CommandLineParser
     {
-
         public bool disableDebugLogStackTrace = false;
 
         public bool resizeWindow = false;

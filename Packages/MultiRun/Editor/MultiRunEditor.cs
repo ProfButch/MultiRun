@@ -103,16 +103,16 @@ namespace Bitwesgames {
                     string moreArgs = "";
                     if(i == 0)
                     {
-                        moreArgs = "-mr-arrangement tl";
+                        moreArgs = $"-screen-fullscreen 0 -mr-arrangement {MultiRun.WindowPositioner.ARRANGE_TOP_LEFT}";
                     }else if(i == 1)
                     {
-                        moreArgs = "-mr-arrangement tr";
+                        moreArgs = "-screen-fullscreen 0 -mr-arrangement tr";
                     } else if(i == 2)
                     {
-                        moreArgs = "-mr-arrangement bl";
+                        moreArgs = "-screen-fullscreen 0 -mr-arrangement bl";
                     } else if(i == 3)
                     {
-                        moreArgs = "-mr-arrangement br";
+                        moreArgs = "-screen-fullscreen 0 -mr-arrangement br";
                     }
                     RunBuild(curPath, makeLogNameFromPath(curPath, $"_{i + 1}"), moreArgs);
                 }

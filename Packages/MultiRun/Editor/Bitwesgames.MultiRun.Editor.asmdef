@@ -1,7 +1,9 @@
 {
     "name": "MultiRun.Editor",
     "rootNamespace": "Bitwesgames.MultiRun.Editor",
-    "references": [],
+    "references": [
+        "GUID:3d1a0f175fcdd41369b2902cde0c3424"
+    ],
     "includePlatforms": [
         "Editor"
     ],
