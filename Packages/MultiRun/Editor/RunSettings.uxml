@@ -1,11 +1,11 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement name="BuildSettings">
         <ui:Label text="Build Settings" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center; background-color: rgb(0, 0, 0);" />
-        <ui:Label text="Global Build Path" display-tooltip-when-elided="true" tooltip="This build path applies to all projects.  This is useful for setting a default build path to be used if you do not want to have a build path set per project.  Project Build Path overrides this value.  This does not affect Unity&apos;s build path setting. " />
+        <ui:Label text="Global Build Path" display-tooltip-when-elided="true" tooltip="The path and file name to be used when building the game.  This build path applies to all projects.  This is useful for setting a default build path to be used if you do not want to have a build path set per project.  Project Build Path overrides this value.  This does not affect Unity&apos;s build path setting." style="height: 15px;" />
         <ui:TextField picking-mode="Ignore" name="GlobalBuildPath" tooltip="This is the build path is set in the Editor Prefs and will span multiple projects.">
             <ui:Button text="..." display-tooltip-when-elided="true" name="BrowseGlobalBuildPath" />
         </ui:TextField>
-        <ui:Label text="Project Build Path" display-tooltip-when-elided="true" tooltip="This build path overrides the Global Build Path (if set) and is specific to this project.  This does not affect Unity&apos;s build path setting." />
+        <ui:Label text="Project Build Path" display-tooltip-when-elided="true" tooltip="The path and file name to be used when building the game.  This build path overrides the Global Build Path (if set) and is specific to this project.  This does not affect Unity&apos;s build path setting." />
         <ui:TextField picking-mode="Ignore" name="ProjectBuildPath">
             <ui:Button text="..." display-tooltip-when-elided="true" name="BrowsProjectBuildPath" />
         </ui:TextField>
