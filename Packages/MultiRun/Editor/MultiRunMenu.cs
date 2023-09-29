@@ -22,6 +22,14 @@ namespace Bitwesgames {
             window.LoadLogs();
         }
 
+        // At leas on Mac, moving the cursor from the window to a menu does not
+        // trigger the loss of focus until after the menu item has been pressed,
+        // so we have to "save if open" in most menu items.
+        private static void SaveSettingsIfOpen() {
+            if (EditorWindow.HasOpenInstances<Bitwesgames.RunSettings>()) {
+                EditorWindow.GetWindow<Bitwesgames.RunSettings>().SaveIfChanged();
+            }
+        }
 
         private static bool IsBuildPathValid() {
             return mre.GetBuildPath() != string.Empty;
@@ -68,6 +76,7 @@ namespace Bitwesgames {
         //--------------------------------
         [MenuItem("MultiRun/Build", false, 100)]
         private static void MnuBuild() {
+            SaveSettingsIfOpen();
             string curPath = mre.GetBuildPath();
             // This handles the one case where it wasn't set and the user canceled
             // the dialog to set the build path.
@@ -80,6 +89,7 @@ namespace Bitwesgames {
 
         [MenuItem("MultiRun/Build Current Scene", false, 100)]
         private static void MnuBuildCurrentScene() {
+            SaveSettingsIfOpen();
             string curPath = mre.GetBuildPath();
             // This handles the one case where it wasn't set and the user canceled
             // the dialog to set the build path.
@@ -93,45 +103,53 @@ namespace Bitwesgames {
         //--------------------------------
         [MenuItem("MultiRun/Build & Run/1", false, 200)]
         private static void MnuBuildRun1() {
+            SaveSettingsIfOpen();
             mre.BuildThenRunX(1);
         }
 
 
         [MenuItem("MultiRun/Build & Run/2", false, 200)]
         private static void MnuBuildRun2() {
+            SaveSettingsIfOpen();
             mre.BuildThenRunX(2);
         }
 
 
         [MenuItem("MultiRun/Build & Run/3", false, 200)]
         private static void MnuBuildRun3() {
+            SaveSettingsIfOpen();
             mre.BuildThenRunX(3);
         }
 
 
         [MenuItem("MultiRun/Build & Run/4", false, 200)]
         private static void MnuBuildRun4(){
+            SaveSettingsIfOpen();
             mre.BuildThenRunX(4);
         }
 
 
         [MenuItem("MultiRun/Run/1", false, 200)]
         private static void MnuRun1() {
+            SaveSettingsIfOpen();
             mre.RunBuildXTimes(1);
         }
 
         [MenuItem("MultiRun/Run/2", false, 200)]
         private static void MnuRun2() {
+            SaveSettingsIfOpen();
             mre.RunBuildXTimes(2);
         }
 
         [MenuItem("MultiRun/Run/3", false, 200)]
         private static void MnuRun3() {
+            SaveSettingsIfOpen();
             mre.RunBuildXTimes(3);
         }
 
         [MenuItem("MultiRun/Run/4", false, 200)]
         private static void MnuRun4() {
+            SaveSettingsIfOpen();
             mre.RunBuildXTimes(4);
         }
 
@@ -141,12 +159,14 @@ namespace Bitwesgames {
         //--------------------------------
         [MenuItem("MultiRun/Log Watcher (alpha)", false, 999)]
         private static void MnuViewLogs() {
+            SaveSettingsIfOpen();
             ShowLogs();
         }
 
 
         [MenuItem("MultiRun/Show Files", false, 999)]
         private static void MnuViewFiles() {
+            SaveSettingsIfOpen();
             string parentDir = Path.GetDirectoryName(mre.GetBuildPath());
             if (Directory.Exists(parentDir)) {
                 EditorUtility.RevealInFinder(mre.GetBuildPath());

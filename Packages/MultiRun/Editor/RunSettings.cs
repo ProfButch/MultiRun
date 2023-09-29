@@ -8,7 +8,17 @@ using Unity.VisualScripting.IonicZip;
 namespace Bitwesgames
 {
     public class RunSettings : EditorWindow {
+        private class InstanceSettings
+        {
+            public TextField txtArguments;
+
+            public InstanceSettings(VisualElement baseElement) {
+                txtArguments = baseElement.Query<TextField>("CliArgs").First();
+            }
+        }
+
         private OsHelper osHelper = new OsHelper();
+        public bool hasChanges = false;
 
         Toggle tglArrangeWindows;
         Toggle tglDisableLogStackTrace;
@@ -16,6 +26,12 @@ namespace Bitwesgames
         TextField txtProjectBuildPath;
         Button btnGlobalBuildPath;
         Button btnProjectBuildPath;
+        Button btnApply;
+        ScrollView scroll;
+
+        InstanceSettings allInstanceSettings;
+        InstanceSettings[] instanceSettings = new InstanceSettings[4];
+
 
         private T FirstCtrl<T>(string name) where T : VisualElement {
             return rootVisualElement.Query<T>(name).First();
@@ -24,37 +40,118 @@ namespace Bitwesgames
 
         public void CreateGUI() {
             VisualElement root = rootVisualElement;
-            root.RegisterCallback<BlurEvent>(OnRootBlur);
-
 
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwesgames.multirun/Editor/RunSettings.uxml");
             VisualElement uxmlElements = visualTree.Instantiate();
             root.Add(uxmlElements);
 
-            tglArrangeWindows = FirstCtrl<Toggle>("ArrangeWindows");
-            tglArrangeWindows.value = MultiRunSettings.instance.arrangeWindows;
-            tglArrangeWindows.RegisterCallback<ChangeEvent<bool>>(OnArrangeWindowsChanged);
+            SetupControls();
+            LoadValues();
+        }
 
-            tglDisableLogStackTrace = FirstCtrl<Toggle>("DisableStackTrace");
-            tglDisableLogStackTrace.value = MultiRunSettings.instance.disableLogStackTrace;
-            tglDisableLogStackTrace.RegisterCallback<ChangeEvent<bool>>(OnDisableLogStackTraceChanged);
+
+        private void LoadValues() {
+            var mrsi = MultiRunSettings.instance;
+
+            tglArrangeWindows.value = mrsi.arrangeWindows;
+            tglDisableLogStackTrace.value = mrsi.disableLogStackTrace;
+            txtGlobalBuildPath.value = MultiRunMenu.mre.buildPath;
+            txtProjectBuildPath.value = mrsi.projectBuildPath;
+            allInstanceSettings.txtArguments.value = mrsi.allInstanceArgs;
+            instanceSettings[0].txtArguments.value = mrsi.instanceArgs[0];
+            instanceSettings[1].txtArguments.value = mrsi.instanceArgs[1];
+            instanceSettings[2].txtArguments.value = mrsi.instanceArgs[2];
+            instanceSettings[3].txtArguments.value = mrsi.instanceArgs[3];
+
+            MarkUnchanged();
+        }
+
+        private void WireForChange(VisualElement elem)
+        {
+            if(elem is Toggle) {
+                elem.RegisterCallback<ChangeEvent<bool>>(OnSomeValueChanged);
+            } else if(elem is TextField) {
+                elem.RegisterCallback<ChangeEvent<string>>(OnSomeValueChanged);
+            }
+        }
+
+
+        private void SetupControls()
+        {            
+            scroll = FirstCtrl<ScrollView>("MainScroll");
+
+            btnApply = FirstCtrl<Button>("Apply");
+            btnApply.clicked += OnApplyClicked;
+
+            tglArrangeWindows = FirstCtrl<Toggle>("ArrangeWindows");            
+            WireForChange(tglArrangeWindows);
+
+            tglDisableLogStackTrace = FirstCtrl<Toggle>("DisableStackTrace");            
+            tglDisableLogStackTrace.RegisterCallback<ChangeEvent<bool>>(OnSomeValueChanged);
 
             txtGlobalBuildPath = FirstCtrl<TextField>("GlobalBuildPath");
-            txtGlobalBuildPath.value = MultiRunMenu.mre.buildPath;
+            WireForChange(txtGlobalBuildPath);
 
             btnGlobalBuildPath = FirstCtrl<Button>("BrowseGlobalBuildPath");
             btnGlobalBuildPath.clicked += OnBrowseGlobalBuildPathClicked;
 
             txtProjectBuildPath = FirstCtrl<TextField>("ProjectBuildPath");
-            txtProjectBuildPath.value = MultiRunSettings.instance.projectBuildPath;
-
+            WireForChange(txtProjectBuildPath);
+            
             btnProjectBuildPath = FirstCtrl<Button>("BrowsProjectBuildPath");
             btnProjectBuildPath.clicked += OnBrowseProjectBuildPathClicked;
+
+            allInstanceSettings = new InstanceSettings(FirstCtrl<VisualElement>("AllInstanceSettings"));
+            WireForChange(allInstanceSettings.txtArguments);
+            instanceSettings[0] = new InstanceSettings(FirstCtrl<VisualElement>("Instance1Settings"));
+            WireForChange(instanceSettings[0].txtArguments);
+            instanceSettings[1] = new InstanceSettings(FirstCtrl<VisualElement>("Instance2Settings"));
+            WireForChange(instanceSettings[1].txtArguments);
+            instanceSettings[2] = new InstanceSettings(FirstCtrl<VisualElement>("Instance3Settings"));
+            WireForChange(instanceSettings[2].txtArguments);
+            instanceSettings[3] = new InstanceSettings(FirstCtrl<VisualElement>("Instance4Settings"));
+            WireForChange(instanceSettings[3].txtArguments);
         }
 
-        private void OnRootBlur(BlurEvent evt){
-            Debug.Log("Root blurred");
+
+        private void MarkChanged() {
+            btnApply.text = "* Apply";
+            hasChanges = true;
         }
+
+
+        private void MarkUnchanged() {
+            btnApply.text = "Apply";
+            hasChanges = false;
+        }
+
+
+        // -------------------------
+        // Events
+        // -------------------------
+        private void OnLostFocus() {
+            SaveIfChanged();
+        }
+
+
+        private void OnDestroy() {
+            SaveIfChanged();
+        }
+
+        private void OnApplyClicked() {
+            SaveChanges();
+        }
+
+
+        private void OnSomeValueChanged(ChangeEvent<bool> evt) {
+            MarkChanged();
+        }
+
+
+        private void OnSomeValueChanged(ChangeEvent<string> evt) {
+            MarkChanged();
+        }
+
 
         private void OnBrowseGlobalBuildPathClicked() {   
             string result = getFilePathFromUser(txtGlobalBuildPath.value);
@@ -73,16 +170,9 @@ namespace Bitwesgames
         }
 
 
-        private void OnArrangeWindowsChanged(ChangeEvent<bool> evt) {            
-            Save();
-        }
-
-
-        private void OnDisableLogStackTraceChanged(ChangeEvent<bool> evt) {             
-            Save();
-        }
-
-
+        // -------------------------
+        // Public
+        // -------------------------
         public bool ShouldArrangeWindows() {
             return tglArrangeWindows.value;
         }
@@ -108,23 +198,35 @@ namespace Bitwesgames
                 curDir = startDir.Replace(curFile, "");
             }
 
-            Debug.Log($"{startDir}::{curFile}::{curDir}");
-
             string toReturn = EditorUtility.SaveFilePanel("Set Build Path", curDir, curFile, ext);
-
             return toReturn;
         }
 
 
-        public void Save() {
+        public override void SaveChanges() {
             Debug.Log("Saving");
 
             MultiRunMenu.mre.buildPath = txtGlobalBuildPath.value;
 
-            MultiRunSettings.instance.arrangeWindows = tglArrangeWindows.value;
-            MultiRunSettings.instance.disableLogStackTrace = tglDisableLogStackTrace.value;
-            MultiRunSettings.instance.projectBuildPath = txtProjectBuildPath.value;
-            MultiRunSettings.instance.DoSave();            
+            var mrsi = MultiRunSettings.instance;
+            mrsi.arrangeWindows = tglArrangeWindows.value;
+            mrsi.disableLogStackTrace = tglDisableLogStackTrace.value;
+            mrsi.projectBuildPath = txtProjectBuildPath.value;
+            mrsi.allInstanceArgs = allInstanceSettings.txtArguments.value;
+            mrsi.instanceArgs[0] = instanceSettings[0].txtArguments.value;
+            mrsi.instanceArgs[1] = instanceSettings[1].txtArguments.value;
+            mrsi.instanceArgs[2] = instanceSettings[2].txtArguments.value;
+            mrsi.instanceArgs[3] = instanceSettings[3].txtArguments.value;
+
+            MultiRunSettings.instance.DoSave();
+            MarkUnchanged();
+            base.SaveChanges();
+        }
+
+        public void SaveIfChanged() {
+            if (hasChanges) {
+                SaveChanges();
+            }
         }
     }
 }

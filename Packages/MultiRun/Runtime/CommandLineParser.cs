@@ -6,10 +6,10 @@ namespace MultiRun.Cli
 {
     public static class ArgDef
     {
-        public const string ARG_WINDOW_ARRANGEMENT = "window_arrangement";
+        public const string ARG_WINDOW_ARRANGEMENT = "win_arrange";
         public const string ARG_DISABLE_LOG_STACK_TRACE = "disable_log_stack_trace";
 
-        const string PREFIX = "-mr_";
+        const string PREFIX = "-mrun_";
 
         private static Dictionary<string, object> argDefaults = new Dictionary<string, object>() {
             {ARG_WINDOW_ARRANGEMENT, WindowPositioner.ARRANGE_NONE },

@@ -27,14 +27,10 @@ namespace Bitwesgames {
             }
 
             set {
-                if (value.Length != 0)
-                {
+                if (value.Length != 0) {
                     EditorPrefs.SetString(PREF_BUILD_PATH, value);
-                    Debug.Log($"Build path changed to {EditorPrefs.GetString(PREF_BUILD_PATH)}");
-                } else
-                {
+                } else {
                     EditorPrefs.SetString(PREF_BUILD_PATH, string.Empty);
-                    Debug.LogError($"Invalid build path:  {value}");
                 }
             }
         }
@@ -88,8 +84,10 @@ namespace Bitwesgames {
         public void RunBuildX(string path, int i)
         {
             Dictionary<string, object> args = new Dictionary<string, object>();
+            string moreArgs = MultiRunSettings.instance.allInstanceArgs + " ";
 
             if (MultiRunSettings.instance.arrangeWindows) {
+                moreArgs += MultiRunSettings.instance.instanceArgs[i] + " ";
                 if (i == 0) {
                     args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_LEFT;
                 } else if (i == 1) {
@@ -106,7 +104,7 @@ namespace Bitwesgames {
                 args[ArgDef.ARG_DISABLE_LOG_STACK_TRACE] = true;
             }
 
-            string moreArgs = ArgDef.MakeArgString(args);
+            moreArgs += ArgDef.MakeArgString(args);
             RunBuild(path, makeLogNameFromPath(path, $"_{i + 1}"), moreArgs);
         }
 
@@ -131,35 +129,6 @@ namespace Bitwesgames {
                     RunBuildXTimes(x);
                 }
             }
-        }
-
-
-        /*
-         * Prompts the user for a path to a file.  Can optionally provide the
-         * current path that is being used.
-         *
-         * This will set the the BUILD_PATH_PREF editor preference value to what
-         * is chosen and also return that value.
-         *
-         * If the user cancels then the editor preference is not set and the current
-         * value of the editor preference is returned.
-         */
-        public string getFilePathFromUser(string startDir = "") {
-            string fullPath = startDir;
-            string curDir = "";
-            string curFile = "";
-            string ext = osHelper.execExtension;
-
-            if (fullPath == string.Empty) {
-                fullPath = "";
-            } else {
-                curFile = Path.GetFileName(startDir);
-                curDir = Path.GetFullPath(startDir);
-            }
-
-            string toReturn = EditorUtility.SaveFilePanel("Set Build Path", curDir, curFile, ext);
-
-            return toReturn;
         }
 
 

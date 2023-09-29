@@ -14,6 +14,16 @@ public class MultiRunSettings : ScriptableSingleton<MultiRunSettings>
     [SerializeField]
     public string projectBuildPath = string.Empty;
 
+    [SerializeField]
+    public string allInstanceArgs= string.Empty;
+
+    [SerializeField]
+    public string[] instanceArgs = new string[4]{
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty
+    };
 
     public void DoSave()
     {
