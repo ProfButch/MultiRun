@@ -13,12 +13,12 @@ namespace Bitwesgames {
     [InitializeOnLoadAttribute]
     public static class MultiRunMenu{
 
-        private static MultiRunEditor mre = new MultiRunEditor();
+        public static MultiRunEditor mre = new MultiRunEditor();
 
 
         private static void ShowLogs() {
             var window = EditorWindow.GetWindow<Bitwesgames.LogViewer>();
-            window.basePath = Path.Join(Path.GetDirectoryName(mre.buildPath), Path.GetFileNameWithoutExtension(mre.buildPath));
+            window.basePath = Path.Join(Path.GetDirectoryName(mre.GetBuildPath()), Path.GetFileNameWithoutExtension(mre.GetBuildPath()));
             window.ShowPopup();
             window.LoadLogs();
         }
@@ -27,14 +27,14 @@ namespace Bitwesgames {
         //--------------------------------
         // Section 1
         //--------------------------------
-        [MenuItem("MultiRun/Set Build Path", false, 1)]
-        private static void MnuSetBuildPath() {
-            string newPath = mre.getFilePathFromUser(mre.buildPath);
-            if(newPath.Length != 0)
-            {
-                mre.buildPath = newPath;
-            }
-        }
+        //[MenuItem("MultiRun/Set Build Path", false, 1)]
+        //private static void MnuSetBuildPath() {
+        //    string newPath = mre.getFilePathFromUser(mre.buildPath);
+        //    if(newPath.Length != 0)
+        //    {
+        //        mre.buildPath = newPath;
+        //    }
+        //}
 
         [MenuItem("MultiRun/Run Settings", false, 1)]
         private static void MnuRunSettings()
@@ -49,7 +49,7 @@ namespace Bitwesgames {
         //--------------------------------
         [MenuItem("MultiRun/Build", false, 100)]
         private static void MnuBuild() {
-            string curPath = mre.buildPath;
+            string curPath = mre.GetBuildPath();
             // This handles the one case where it wasn't set and the user canceled
             // the dialog to set the build path.
             if (curPath != string.Empty) {
@@ -60,7 +60,7 @@ namespace Bitwesgames {
 
         [MenuItem("MultiRun/Build Current Scene", false, 100)]
         private static void MnuBuildCurrentScene() {
-            string curPath = mre.buildPath;
+            string curPath = mre.GetBuildPath();
             // This handles the one case where it wasn't set and the user canceled
             // the dialog to set the build path.
             if (curPath != string.Empty) {
@@ -124,19 +124,18 @@ namespace Bitwesgames {
 
         [MenuItem("MultiRun/Show Files", false, 999)]
         private static void MnuViewFiles() {
-            string parentDir = Path.GetDirectoryName(mre.buildPath);
+            string parentDir = Path.GetDirectoryName(mre.GetBuildPath());
             if (Directory.Exists(parentDir)) {
-                EditorUtility.RevealInFinder(mre.buildPath);
+                EditorUtility.RevealInFinder(mre.GetBuildPath());
             } else {
                 Debug.LogError($"Cannot open {parentDir} because it does not exist.  Kicking off a build will create the path.");
             }
         }
 
-
-        [MenuItem("MultiRun/About", false, 999)]
-        private static void MnuAbout(){
-            Debug.Log("About the thing.");
-            Debug.Log(mre.LazyGetBuildPath());
-        }
+        //[MenuItem("MultiRun/About", false, 999)]
+        //private static void MnuAbout(){
+        //    Debug.Log("About the thing.");
+        //    Debug.Log(mre.GetBuildPath());
+        //}
     }
 }

@@ -6,10 +6,11 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using MultiRun;
 using MultiRun.Cli;
+
+
+
+
 namespace Bitwesgames {
-    // !! ScriptableSingleton for saving settings per project.
-    //    It also might be useful for preventing reload of
-    //    the gui after compilation:  "survives assembly reloading in the Editor."
 
     public class MultiRunEditor{
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
@@ -39,7 +40,6 @@ namespace Bitwesgames {
         }
 
 
-
         /*
          * Adapted from one of the repsonses on
          * https://answers.unity.com/questions/1128694/how-can-i-get-a-list-of-all-scenes-in-the-build.html
@@ -65,21 +65,10 @@ namespace Bitwesgames {
             return scenes.ToArray();
         }
 
+
         private string makeLogNameFromPath(string path, string extra = "") {
             string toReturn = $"{Path.GetFileNameWithoutExtension(path)}{extra}.log";
             return toReturn;
-        }
-
-
-
-
-        public string LazyGetBuildPath()
-        {
-            if(buildPath == string.Empty)
-            {
-                buildPath = getFilePathFromUser();
-            }
-            return buildPath;
         }
 
 
@@ -96,27 +85,38 @@ namespace Bitwesgames {
         }
 
 
+        public void RunBuildX(string path, int i)
+        {
+            Dictionary<string, object> args = new Dictionary<string, object>();
+
+            if (MultiRunSettings.instance.arrangeWindows) {
+                if (i == 0) {
+                    args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_LEFT;
+                } else if (i == 1) {
+                    args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_RIGHT;
+                } else if (i == 2) {
+                    args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_BOTTOM_LEFT;
+                } else if (i == 3) {
+                    args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_BOTTOM_RIGHT;
+                }
+            }
+
+
+            if (MultiRunSettings.instance.disableLogStackTrace) {
+                args[ArgDef.ARG_DISABLE_LOG_STACK_TRACE] = true;
+            }
+
+            string moreArgs = ArgDef.MakeArgString(args);
+            RunBuild(path, makeLogNameFromPath(path, $"_{i + 1}"), moreArgs);
+        }
+
+
         public void RunBuildXTimes(int x = 1) {
-            string curPath = buildPath;
+            string curPath = GetBuildPath();
 
             if (curPath != string.Empty) {
                 for (int i = 0; i < x; i++) {
-                    Dictionary<string, object> args = new Dictionary<string, object>();                    
-
-                    if (i == 0) {
-                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_LEFT;
-                    }else if(i == 1) {
-                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_RIGHT;
-                    } else if(i == 2) {
-                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_BOTTOM_LEFT;
-                    } else if(i == 3) {
-                        args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_BOTTOM_RIGHT;
-                    }
-                    
-                    args[ArgDef.ARG_DISABLE_LOG_STACK_TRACE] = true;
-                    string moreArgs = ArgDef.MakeArgString(args);                   
-                    Debug.Log(moreArgs);
-                    RunBuild(curPath, makeLogNameFromPath(curPath, $"_{i + 1}"), moreArgs);
+                    RunBuildX(curPath, i);
                 }
             } else {
                 Debug.LogWarning("Cannot run, build path not set.");
@@ -125,8 +125,8 @@ namespace Bitwesgames {
 
 
         public void BuildThenRunX(int x = 1, bool runCurrentScene = false) {
-            if (buildPath != string.Empty) {
-                bool result = Build(buildPath, runCurrentScene);
+            if (GetBuildPath() != string.Empty) {
+                bool result = Build(GetBuildPath(), runCurrentScene);
                 if (result) {
                     RunBuildXTimes(x);
                 }
@@ -197,6 +197,14 @@ namespace Bitwesgames {
             return success;
         }
 
+
+        public string GetBuildPath() {
+            if (MultiRunSettings.instance.projectBuildPath != string.Empty) {
+                return MultiRunSettings.instance.projectBuildPath;
+            } else {
+                return buildPath;
+            }
+        }
 
     }
 }
