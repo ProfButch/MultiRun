@@ -119,7 +119,7 @@ namespace Bitwesgames {
                     RunBuildX(curPath, i);
                 }
             } else {
-                Debug.LogWarning("Cannot run, build path not set.");
+                Debug.LogError("Cannot run, build path not set.");
             }
         }
 

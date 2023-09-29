@@ -15,7 +15,6 @@ namespace Bitwesgames {
 
         public static MultiRunEditor mre = new MultiRunEditor();
 
-
         private static void ShowLogs() {
             var window = EditorWindow.GetWindow<Bitwesgames.LogViewer>();
             window.basePath = Path.Join(Path.GetDirectoryName(mre.GetBuildPath()), Path.GetFileNameWithoutExtension(mre.GetBuildPath()));
@@ -24,21 +23,41 @@ namespace Bitwesgames {
         }
 
 
+        private static bool IsBuildPathValid() {
+            return mre.GetBuildPath() != string.Empty;
+        }
+
+        // ------------------------------
+        // Validation
+        //
+        // Note, I thought about validating that the build file exists for the
+        // run menu items, but File.Exist is false for directories and .app are
+        // directories so it will be different validation for different OS and
+        // that made me real mad.
+        // ------------------------------
+        [MenuItem("MultiRun/Build", true)]
+        [MenuItem("MultiRun/Build Current Scene", true)]
+        [MenuItem("MultiRun/Build & Run/1", true)]
+        [MenuItem("MultiRun/Build & Run/2", true)]
+        [MenuItem("MultiRun/Build & Run/3", true)]
+        [MenuItem("MultiRun/Build & Run/4", true)]
+        [MenuItem("MultiRun/Run/1", true)]
+        [MenuItem("MultiRun/Run/2", true)]
+        [MenuItem("MultiRun/Run/3", true)]
+        [MenuItem("MultiRun/Run/4", true)]
+        [MenuItem("MultiRun/Log Watcher (alpha)", true)]
+        [MenuItem("MultiRun/Show Files", true)]
+        private static bool ValidateBuildPathDependant() {
+            return IsBuildPathValid();
+        }
+
+
+
         //--------------------------------
         // Section 1
         //--------------------------------
-        //[MenuItem("MultiRun/Set Build Path", false, 1)]
-        //private static void MnuSetBuildPath() {
-        //    string newPath = mre.getFilePathFromUser(mre.buildPath);
-        //    if(newPath.Length != 0)
-        //    {
-        //        mre.buildPath = newPath;
-        //    }
-        //}
-
-        [MenuItem("MultiRun/Run Settings", false, 1)]
-        private static void MnuRunSettings()
-        {
+        [MenuItem("MultiRun/Settings", false, 1)]
+        private static void MnuRunSettings() {
             var window = EditorWindow.GetWindow<Bitwesgames.RunSettings>();
             window.ShowPopup();
         }
@@ -57,6 +76,7 @@ namespace Bitwesgames {
             }
         }
 
+        
 
         [MenuItem("MultiRun/Build Current Scene", false, 100)]
         private static void MnuBuildCurrentScene() {
@@ -68,7 +88,6 @@ namespace Bitwesgames {
             }
         }
 
-
         //--------------------------------
         // Section 200
         //--------------------------------
@@ -77,20 +96,24 @@ namespace Bitwesgames {
             mre.BuildThenRunX(1);
         }
 
+
         [MenuItem("MultiRun/Build & Run/2", false, 200)]
         private static void MnuBuildRun2() {
             mre.BuildThenRunX(2);
         }
+
 
         [MenuItem("MultiRun/Build & Run/3", false, 200)]
         private static void MnuBuildRun3() {
             mre.BuildThenRunX(3);
         }
 
+
         [MenuItem("MultiRun/Build & Run/4", false, 200)]
-        private static void MnuBuildRun4() {
+        private static void MnuBuildRun4(){
             mre.BuildThenRunX(4);
         }
+
 
         [MenuItem("MultiRun/Run/1", false, 200)]
         private static void MnuRun1() {
@@ -116,7 +139,7 @@ namespace Bitwesgames {
         //--------------------------------
         // Section 999
         //--------------------------------
-        [MenuItem("MultiRun/View Logs", false, 999)]
+        [MenuItem("MultiRun/Log Watcher (alpha)", false, 999)]
         private static void MnuViewLogs() {
             ShowLogs();
         }
@@ -131,11 +154,5 @@ namespace Bitwesgames {
                 Debug.LogError($"Cannot open {parentDir} because it does not exist.  Kicking off a build will create the path.");
             }
         }
-
-        //[MenuItem("MultiRun/About", false, 999)]
-        //private static void MnuAbout(){
-        //    Debug.Log("About the thing.");
-        //    Debug.Log(mre.GetBuildPath());
-        //}
     }
 }
