@@ -28,14 +28,12 @@ namespace Bitwesgames
         Button btnProjectBuildPath;
         Button btnApply;
         ScrollView scroll;
+        Label lblBuildError;
 
         InstanceSettings allInstanceSettings;
         InstanceSettings[] instanceSettings = new InstanceSettings[4];
 
 
-        private T FirstCtrl<T>(string name) where T : VisualElement {
-            return rootVisualElement.Query<T>(name).First();
-        }
 
 
         public void CreateGUI() {
@@ -49,22 +47,20 @@ namespace Bitwesgames
             LoadValues();
         }
 
-
-        private void LoadValues() {
-            var mrsi = MultiRunSettings.instance;
-
-            tglArrangeWindows.value = mrsi.arrangeWindows;
-            tglDisableLogStackTrace.value = mrsi.disableLogStackTrace;
-            txtGlobalBuildPath.value = MultiRunMenu.mre.buildPath;
-            txtProjectBuildPath.value = mrsi.projectBuildPath;
-            allInstanceSettings.txtArguments.value = mrsi.allInstanceArgs;
-            instanceSettings[0].txtArguments.value = mrsi.instanceArgs[0];
-            instanceSettings[1].txtArguments.value = mrsi.instanceArgs[1];
-            instanceSettings[2].txtArguments.value = mrsi.instanceArgs[2];
-            instanceSettings[3].txtArguments.value = mrsi.instanceArgs[3];
-
-            MarkUnchanged();
+        private void Update() {
+            if(txtGlobalBuildPath.value == string.Empty && txtProjectBuildPath.value == string.Empty) {
+                lblBuildError.visible = true;
+                lblBuildError.text = "* You must have one build path set.";
+            } else {
+                lblBuildError.visible = false;
+            }
         }
+
+
+        private T FirstCtrl<T>(string name) where T : VisualElement {
+            return rootVisualElement.Query<T>(name).First();
+        }
+
 
         private void WireForChange(VisualElement elem)
         {
@@ -76,19 +72,37 @@ namespace Bitwesgames
         }
 
 
+        private void LoadValues() {
+            var mrsi = MultiRunSettings.instance;
+
+            // Build Settings
+            txtGlobalBuildPath.value = MultiRunMenu.mre.buildPath;
+            txtProjectBuildPath.value = mrsi.projectBuildPath;
+
+
+            // Run Settings
+            tglArrangeWindows.value = mrsi.arrangeWindows;
+            tglDisableLogStackTrace.value = mrsi.disableLogStackTrace;
+            allInstanceSettings.txtArguments.value = mrsi.allInstanceArgs;
+            instanceSettings[0].txtArguments.value = mrsi.instanceArgs[0];
+            instanceSettings[1].txtArguments.value = mrsi.instanceArgs[1];
+            instanceSettings[2].txtArguments.value = mrsi.instanceArgs[2];
+            instanceSettings[3].txtArguments.value = mrsi.instanceArgs[3];
+
+            MarkUnchanged();
+        }
+
+
         private void SetupControls()
         {            
+            // General
             scroll = FirstCtrl<ScrollView>("MainScroll");
 
             btnApply = FirstCtrl<Button>("Apply");
             btnApply.clicked += OnApplyClicked;
 
-            tglArrangeWindows = FirstCtrl<Toggle>("ArrangeWindows");            
-            WireForChange(tglArrangeWindows);
 
-            tglDisableLogStackTrace = FirstCtrl<Toggle>("DisableStackTrace");            
-            tglDisableLogStackTrace.RegisterCallback<ChangeEvent<bool>>(OnSomeValueChanged);
-
+            // Build Settings
             txtGlobalBuildPath = FirstCtrl<TextField>("GlobalBuildPath");
             WireForChange(txtGlobalBuildPath);
 
@@ -100,6 +114,16 @@ namespace Bitwesgames
             
             btnProjectBuildPath = FirstCtrl<Button>("BrowsProjectBuildPath");
             btnProjectBuildPath.clicked += OnBrowseProjectBuildPathClicked;
+
+            lblBuildError = FirstCtrl<Label>("BuildSettingError");
+
+
+            // Run Settings
+            tglArrangeWindows = FirstCtrl<Toggle>("ArrangeWindows");            
+            WireForChange(tglArrangeWindows);
+
+            tglDisableLogStackTrace = FirstCtrl<Toggle>("DisableStackTrace");            
+            tglDisableLogStackTrace.RegisterCallback<ChangeEvent<bool>>(OnSomeValueChanged);
 
             allInstanceSettings = new InstanceSettings(FirstCtrl<VisualElement>("AllInstanceSettings"));
             WireForChange(allInstanceSettings.txtArguments);

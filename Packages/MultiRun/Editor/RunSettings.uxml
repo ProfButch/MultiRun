@@ -11,6 +11,7 @@
             <ui:TextField picking-mode="Ignore" name="ProjectBuildPath">
                 <ui:Button text="..." display-tooltip-when-elided="true" name="BrowsProjectBuildPath" />
             </ui:TextField>
+            <ui:Label text="* Set something" display-tooltip-when-elided="true" name="BuildSettingError" style="color: rgb(214, 0, 0); visibility: hidden;" />
         </ui:VisualElement>
         <ui:VisualElement name="MultiRunSettings">
             <ui:Label text="Run Settings" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center; background-color: rgb(0, 0, 0);" />
