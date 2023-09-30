@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 
-namespace Bitwesgames
+namespace MultiRun
 {
     public class LogDisplay {
         public int readSize = 1024;

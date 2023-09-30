@@ -7,7 +7,7 @@ using UnityEngine;
 
 
 
-namespace Bitwesgames {
+namespace MultiRun {
 
 
     [InitializeOnLoadAttribute]
@@ -16,7 +16,7 @@ namespace Bitwesgames {
         public static MultiRunEditor mre = new MultiRunEditor();
 
         private static void ShowLogs() {
-            var window = EditorWindow.GetWindow<Bitwesgames.LogViewer>();
+            var window = EditorWindow.GetWindow<MultiRun.LogViewer>();
             window.basePath = Path.Join(Path.GetDirectoryName(mre.GetBuildPath()), Path.GetFileNameWithoutExtension(mre.GetBuildPath()));
             window.ShowPopup();
             window.LoadLogs();
@@ -26,8 +26,8 @@ namespace Bitwesgames {
         // trigger the loss of focus until after the menu item has been pressed,
         // so we have to "save if open" in most menu items.
         private static void SaveSettingsIfOpen() {
-            if (EditorWindow.HasOpenInstances<Bitwesgames.RunSettings>()) {
-                EditorWindow.GetWindow<Bitwesgames.RunSettings>().SaveIfChanged();
+            if (EditorWindow.HasOpenInstances<MultiRun.SettingsUi>()) {
+                EditorWindow.GetWindow<MultiRun.SettingsUi>().SaveIfChanged();
             }
         }
 
@@ -66,7 +66,8 @@ namespace Bitwesgames {
         //--------------------------------
         [MenuItem("MultiRun/Settings", false, 1)]
         private static void MnuRunSettings() {
-            var window = EditorWindow.GetWindow<Bitwesgames.RunSettings>();
+            var window = EditorWindow.GetWindow<MultiRun.SettingsUi>();
+            window.titleContent.text = "Multi Run Settings";
             window.ShowPopup();
         }
 

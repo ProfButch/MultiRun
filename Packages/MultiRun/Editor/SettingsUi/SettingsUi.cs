@@ -5,11 +5,12 @@ using UnityEditor.UIElements;
 using System.IO;
 using Unity.VisualScripting.IonicZip;
 
-namespace Bitwesgames
+namespace MultiRun
 {
-    public class RunSettings : EditorWindow {
-        private class InstanceSettings
-        {
+    public class SettingsUi : EditorWindow {
+        /**
+         */
+        private class InstanceSettings {
             public TextField txtArguments;
 
             public InstanceSettings(VisualElement baseElement) {
@@ -17,6 +18,11 @@ namespace Bitwesgames
             }
         }
 
+
+
+        // ---------------------------------------------------------------------
+        // Start RunSettings
+        // ---------------------------------------------------------------------
         private OsHelper osHelper = new OsHelper();
         public bool hasChanges = false;
 
@@ -34,18 +40,17 @@ namespace Bitwesgames
         InstanceSettings[] instanceSettings = new InstanceSettings[4];
 
 
-
-
         public void CreateGUI() {
             VisualElement root = rootVisualElement;
 
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwesgames.multirun/Editor/RunSettings.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwesgames.multirun/Editor/SettingsUi/SettingsUi.uxml");
             VisualElement uxmlElements = visualTree.Instantiate();
             root.Add(uxmlElements);
 
             SetupControls();
             LoadValues();
         }
+
 
         private void Update() {
             if(txtGlobalBuildPath.value == string.Empty && txtProjectBuildPath.value == string.Empty) {
@@ -62,8 +67,7 @@ namespace Bitwesgames
         }
 
 
-        private void WireForChange(VisualElement elem)
-        {
+        private void WireForChange(VisualElement elem) {
             if(elem is Toggle) {
                 elem.RegisterCallback<ChangeEvent<bool>>(OnSomeValueChanged);
             } else if(elem is TextField) {

@@ -10,7 +10,7 @@ using MultiRun.Cli;
 
 
 
-namespace Bitwesgames {
+namespace MultiRun {
 
     public class MultiRunEditor{
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
