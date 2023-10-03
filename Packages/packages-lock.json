@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.bitwesgames.multirun": {
+    "com.bitwes.multirun": {
       "version": "file:MultiRun",
       "depth": 0,
       "source": "embedded",
