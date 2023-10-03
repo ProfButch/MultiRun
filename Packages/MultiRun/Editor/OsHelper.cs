@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEditor.SceneManagement;
+using System;
 
 namespace MultiRun {
     public class OsHelper
@@ -40,37 +41,39 @@ namespace MultiRun {
             defaultBuildPath = "~/temp/unity_builds/TheBuild.app";
         }
 
-        private string RunBuildCmdWin(string path, string log, string args)
+        private string RunBuildCmdWin(string path, string args)
         {
             // In windows, you have to give it the full path to where the log should
             // go, it isn't cool like OSX.  So we have to construct the full path from
             // the path to the executable.  Then it's pretty much the same as OSX.
-            string logPath = Path.GetDirectoryName(path);
-            string fullLogPath = Path.Join(logPath, log);
+            //string logPath = Path.GetDirectoryName(path);
+            //string fullLogPath = Path.Join(logPath, log);
 
-            return $"{path} --logfile {fullLogPath} {args}";
+            //return $"{path} --logfile {fullLogPath} {args}";
+            return $"{path} {args}";
         }
 
-        private string RunBuildCmdOsx(string path, string log, string args)
+        private string RunBuildCmdOsx(string path, string args)
         {
             // Uses open to launch the app so we do not have to know where the actual
             // executable is inside the .app bundle.  This also sets the logfile to
             // be the <app name>.log or whatever is specified in logfile.  The log
             // will be in the same directory as the applicaiton.  Each new run
             // overwrites the existing log file if it exists.
-            return $"open -n {path} --args --logfile {log} {args}";
+            //return $"open -n {path} --args --logfile {log} {args}";
+            return $"open -n {path} --args {args}";
         }
 
-        public string RunBuildCommand(string path, string log, string adtlArgs = "")
+        public string RunBuildCommand(string path,string adtlArgs = "")
         {
             string toReturn = "";
             if (mode == MODE_WIN)
             {
-                toReturn = RunBuildCmdWin(path, log, adtlArgs);
+                toReturn = RunBuildCmdWin(path, adtlArgs);
             }
             else if (mode == MODE_OSX)
             {
-                toReturn = RunBuildCmdOsx(path, log, adtlArgs);
+                toReturn = RunBuildCmdOsx(path, adtlArgs);
             }
             return toReturn;
         }
@@ -91,6 +94,20 @@ namespace MultiRun {
             opts.targetGroup = BuildTargetGroup.Standalone;
 
             return opts;
+        }
+
+
+        // Must use the full path the to log so that it works on windows and
+        // mac.  I think mac changes the working directory when using open, but
+        // windows does not, since you just run the exe.
+        public string GetLogfileArg(string path, string logName)
+        {
+            string toReturn = string.Empty;
+            string logPath = Path.GetDirectoryName(path);
+            string fullLogPath = Path.Join(logPath, logName);
+            toReturn = $"--logfile {fullLogPath} ";
+
+            return toReturn;
         }
 
         public BuildPlayerOptions BuildOpts()

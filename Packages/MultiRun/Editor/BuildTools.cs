@@ -71,16 +71,26 @@ namespace MultiRun {
         }
 
 
+        public string MakeRunBuildCmd(string path, string logfile, string args)
+        {
+            string allArgs = args;
+            if(allArgs.IndexOf("--logfile") == -1) {
+                allArgs = osHelper.GetLogfileArg(path, logfile) + args;
+            }
+            string cmd = osHelper.RunBuildCommand(path, allArgs);
+            return cmd;
+        }
+
         public void RunBuild(string path, string logfile, string args) {
-            string cmd = osHelper.RunBuildCommand(path, logfile, args);
-            Debug.Log($"[running]:  {cmd}");
+            string cmd = MakeRunBuildCmd(path, logfile, args);
+            MuRu.Log($"[running]:  {cmd}");
             ShellHelper.ProcessCommand(cmd, "/");
         }
 
 
         public void RunBuild(string path) {
-            string logPath = makeLogNameFromPath(path);
-            RunBuild(path, logPath, "");
+            string logfile = makeLogNameFromPath(path);
+            RunBuild(path, logfile, "");
         }
 
 
@@ -119,7 +129,7 @@ namespace MultiRun {
                     RunBuildX(curPath, i);
                 }
             } else {
-                Debug.LogError("Cannot run, build path not set.");
+                MuRu.LogError("Cannot run, build path not set.");
             }
         }
 
@@ -147,7 +157,7 @@ namespace MultiRun {
             }
 
             if(opts.scenes.Length == 0){
-                Debug.LogError("There are no scenes in the build.  Add at least one scene in Build Settings.");
+                MuRu.LogError("There are no scenes in the build.  Add at least one scene in Build Settings.");
                 return false;
             }
 
@@ -158,10 +168,10 @@ namespace MultiRun {
                 if (runCurrentScene) {
                     logmsg += $"\n    Built scene {EditorSceneManager.GetActiveScene().path} instead of default scene";
                 }
-                Debug.Log(logmsg);
+                MuRu.Log(logmsg);
                 success = true;
             } else if (report.summary.result == BuildResult.Failed) {
-                Debug.Log("Build failed");
+                MuRu.LogError("Build failed");
                 success = false;
             }
 

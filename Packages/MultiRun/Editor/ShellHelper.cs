@@ -32,7 +32,7 @@ namespace MultiRun
                 }
                 if (type == 1)
                 {
-                    UnityEngine.Debug.LogError(log);
+                    MuRu.LogError(log);
                 }
             }
 
@@ -90,7 +90,7 @@ namespace MultiRun
                 }
                 catch (System.Exception e)
                 {
-                    UnityEngine.Debug.LogException(e);
+                    MuRu.LogException(e);
                 }
             }
             _queue.Clear();
@@ -148,15 +148,15 @@ namespace MultiRun
                     p = Process.Start(start);
                     p.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
                     {
-                        UnityEngine.Debug.LogError(e.Data);
+                        MuRu.LogError(e.Data);
                     };
                     p.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
                     {
-                        UnityEngine.Debug.LogError(e.Data);
+                        MuRu.LogError(e.Data);
                     };
                     p.Exited += delegate (object sender, System.EventArgs e)
                     {
-                        UnityEngine.Debug.LogError(e.ToString());
+                        MuRu.LogError(e.ToString());
                     };
 
                     bool hasError = false;
@@ -209,7 +209,7 @@ namespace MultiRun
                 }
                 catch (System.Exception e)
                 {
-                    UnityEngine.Debug.LogException(e);
+                    MuRu.LogException(e);
                     if (p != null)
                     {
                         p.Close();

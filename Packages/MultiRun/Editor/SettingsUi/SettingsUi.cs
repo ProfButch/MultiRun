@@ -231,9 +231,7 @@ namespace MultiRun
         }
 
 
-        public override void SaveChanges() {
-            Debug.Log("Saving");
-
+        public override void SaveChanges() {            
             MultiRunMenu.buildTools.buildPath = txtGlobalBuildPath.value;
 
             var mrsi = ProjectSettings.instance;
@@ -249,6 +247,7 @@ namespace MultiRun
             ProjectSettings.instance.DoSave();
             MarkUnchanged();
             base.SaveChanges();
+            MuRu.Log("Settings Saved");
         }
 
         public void SaveIfChanged() {

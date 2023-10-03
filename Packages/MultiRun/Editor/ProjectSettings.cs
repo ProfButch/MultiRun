@@ -35,7 +35,7 @@ namespace MultiRun
 
         public void PrintMe()
         {
-            Debug.Log("MultiRunSettings state: " + JsonUtility.ToJson(this, true));
+            MuRu.Log("MultiRunSettings state: " + JsonUtility.ToJson(this, true));
         }
     }
 }

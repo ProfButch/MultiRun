@@ -172,7 +172,7 @@ namespace MultiRun {
             if (Directory.Exists(parentDir)) {
                 EditorUtility.RevealInFinder(buildTools.GetBuildPath());
             } else {
-                Debug.LogError($"Cannot open {parentDir} because it does not exist.  Kicking off a build will create the path.");
+                MuRu.LogError($"Cannot open {parentDir} because it does not exist.  Kicking off a build will create the path.");
             }
         }
     }
