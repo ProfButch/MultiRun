@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "com.bitwesgames.multirun": {
-      "version": "file:../MultiRun",
+    "com.bitwes.multirun": {
+      "version": "file:MultiRun",
       "depth": 0,
-      "source": "local",
+      "source": "embedded",
       "dependencies": {}
     },
     "com.unity.2d.animation": {
