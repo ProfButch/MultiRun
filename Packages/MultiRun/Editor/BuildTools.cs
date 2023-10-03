@@ -81,6 +81,7 @@ namespace MultiRun {
             return cmd;
         }
 
+
         public void RunBuild(string path, string logfile, string args) {
             string cmd = MakeRunBuildCmd(path, logfile, args);
             MuRu.Log($"[running]:  {cmd}");
@@ -94,8 +95,7 @@ namespace MultiRun {
         }
 
 
-        public void RunBuildX(string path, int i)
-        {
+        public string MakeRunBuildXCmd(string path, int i) {
             Dictionary<string, object> args = new Dictionary<string, object>();
             string moreArgs = ProjectSettings.instance.allInstanceArgs + " ";
 
@@ -117,6 +117,13 @@ namespace MultiRun {
             }
 
             moreArgs += ArgDef.MakeArgString(args);
+            return moreArgs;
+        }
+
+
+        public void RunBuildX(string path, int i)
+        {
+            string moreArgs = MakeRunBuildXCmd(path, i);
             RunBuild(path, makeLogNameFromPath(path, $"_{i + 1}"), moreArgs);
         }
 

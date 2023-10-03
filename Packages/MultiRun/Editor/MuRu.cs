@@ -17,25 +17,25 @@ namespace MultiRun
     public static class MuRu
     {
         private const string PRE = "[MultiRun]";
-        public static void Log(string msg)
-        {
+
+        public static void Log(string msg) {
             Debug.Log($"{PRE}{msg}");
         }
 
-        public static void LogWarning(string msg)
-        {
+
+        public static void LogWarning(string msg) {
             Debug.LogWarning($"{PRE}{msg}");
         }
 
-        public static void LogError(string msg)
-        {
+
+        public static void LogError(string msg) {
             Debug.LogError($"{PRE}{msg}");
         }
 
+
         // Couldn't think of a clever way to add [MultiRun] to this one, but it
         // is here for completeness.
-        public static void LogException(System.Exception e)
-        {
+        public static void LogException(System.Exception e) {
             Debug.LogException(e);
         }
     }

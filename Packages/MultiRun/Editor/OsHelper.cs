@@ -31,36 +31,25 @@ namespace MultiRun {
         {
             mode = MODE_WIN;
             execExtension = "exe";
-            defaultBuildPath = "c:\\temp\\unity_builds\\TheBuild.exe";
+            defaultBuildPath = "c:\\MultiRunBuild.exe";
         }
 
         private void InitOsx()
         {
             mode = MODE_OSX;
             execExtension = "app";
-            defaultBuildPath = "~/temp/unity_builds/TheBuild.app";
+            defaultBuildPath = "~/MultiRunBuild.app";
         }
 
         private string RunBuildCmdWin(string path, string args)
         {
-            // In windows, you have to give it the full path to where the log should
-            // go, it isn't cool like OSX.  So we have to construct the full path from
-            // the path to the executable.  Then it's pretty much the same as OSX.
-            //string logPath = Path.GetDirectoryName(path);
-            //string fullLogPath = Path.Join(logPath, log);
-
-            //return $"{path} --logfile {fullLogPath} {args}";
             return $"{path} {args}";
         }
 
         private string RunBuildCmdOsx(string path, string args)
         {
-            // Uses open to launch the app so we do not have to know where the actual
-            // executable is inside the .app bundle.  This also sets the logfile to
-            // be the <app name>.log or whatever is specified in logfile.  The log
-            // will be in the same directory as the applicaiton.  Each new run
-            // overwrites the existing log file if it exists.
-            //return $"open -n {path} --args --logfile {log} {args}";
+            // Uses open to launch the app so we do not have to know where the 
+            // actual executable is inside the .app bundle.
             return $"open -n {path} --args {args}";
         }
 
@@ -102,23 +91,19 @@ namespace MultiRun {
         // windows does not, since you just run the exe.
         public string GetLogfileArg(string path, string logName)
         {
-            string toReturn = string.Empty;
             string logPath = Path.GetDirectoryName(path);
             string fullLogPath = Path.Join(logPath, logName);
-            toReturn = $"--logfile {fullLogPath} ";
+            string toReturn = $"--logfile {fullLogPath} ";
 
             return toReturn;
         }
 
-        public BuildPlayerOptions BuildOpts()
-        {
+
+        public BuildPlayerOptions BuildOpts() {
             BuildPlayerOptions opts = new BuildPlayerOptions();
-            if (mode == MODE_WIN)
-            {
+            if (mode == MODE_WIN) {
                 opts = BuildOptsWin();
-            }
-            else if (mode == MODE_OSX)
-            {
+            } else if (mode == MODE_OSX) {
                 opts = BuildOptsOsx();
             }
             return opts;

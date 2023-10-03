@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace MultiRun {
 
-
     [InitializeOnLoadAttribute]
     public static class MultiRunMenu {
 
@@ -22,7 +21,8 @@ namespace MultiRun {
             window.LoadLogs();
         }
 
-        // At leas on Mac, moving the cursor from the window to a menu does not
+
+        // At least on Mac, moving the cursor from the window to a menu does not
         // trigger the loss of focus until after the menu item has been pressed,
         // so we have to "save if open" in most menu items.
         private static void SaveSettingsIfOpen() {
@@ -31,9 +31,11 @@ namespace MultiRun {
             }
         }
 
+
         private static bool IsBuildPathValid() {
             return buildTools.GetBuildPath() != string.Empty;
         }
+
 
         // ------------------------------
         // Validation
@@ -85,7 +87,6 @@ namespace MultiRun {
                 buildTools.Build(curPath);
             }
         }
-
         
 
         [MenuItem("MultiRun/Build Current Scene", false, 100)]
@@ -98,6 +99,7 @@ namespace MultiRun {
                 buildTools.Build(curPath, true);
             }
         }
+
 
         //--------------------------------
         // Section 200
@@ -136,17 +138,20 @@ namespace MultiRun {
             buildTools.RunBuildXTimes(1);
         }
 
+
         [MenuItem("MultiRun/Run/2", false, 200)]
         private static void MnuRun2() {
             SaveSettingsIfOpen();
             buildTools.RunBuildXTimes(2);
         }
 
+
         [MenuItem("MultiRun/Run/3", false, 200)]
         private static void MnuRun3() {
             SaveSettingsIfOpen();
             buildTools.RunBuildXTimes(3);
         }
+
 
         [MenuItem("MultiRun/Run/4", false, 200)]
         private static void MnuRun4() {
