@@ -1,6 +1,6 @@
 {
-    "name": "Bitwesgames.MultiRun",
-    "rootNamespace": "",
+    "name": "Bitwes.MultiRun",
+    "rootNamespace": "Bitwes.MultiRun",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

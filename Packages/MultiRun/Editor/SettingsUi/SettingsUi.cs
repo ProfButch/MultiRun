@@ -43,7 +43,7 @@ namespace MultiRun
         public void CreateGUI() {
             VisualElement root = rootVisualElement;
 
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwesgames.multirun/Editor/SettingsUi/SettingsUi.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwes.multirun/Editor/SettingsUi/SettingsUi.uxml");
             VisualElement uxmlElements = visualTree.Instantiate();
             root.Add(uxmlElements);
 

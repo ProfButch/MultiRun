@@ -104,7 +104,7 @@ namespace MultiRun
 
         public void CreateGUI() {
             VisualElement root = rootVisualElement;
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwesgames.MultiRun/Editor/LogViewer/LogViewer.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwes.MultiRun/Editor/LogViewer/LogViewer.uxml");
             VisualElement uxmlElements = visualTree.Instantiate();
             root.Add(uxmlElements);
 

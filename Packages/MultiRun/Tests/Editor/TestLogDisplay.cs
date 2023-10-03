@@ -16,7 +16,7 @@ public class TestLogDisplay
 
     private LogDisplay NewLogDisplay()
     {
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwesgames.MultiRun/Editor/LogViewer/LogDisplay.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.bitwes.MultiRun/Editor/LogViewer/LogDisplay.uxml");
         VisualElement uxmlElements = visualTree.Instantiate();
         var toReturn = new LogDisplay(uxmlElements);
         return toReturn;

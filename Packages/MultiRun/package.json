@@ -1,5 +1,5 @@
 {
-  "name": "com.bitwesgames.multirun",
+  "name": "com.bitwes.multirun",
   "version": "0.1.0",
   "displayName": "MultiRun",
   "description": "Tools for building and running multiple instances of a game.",

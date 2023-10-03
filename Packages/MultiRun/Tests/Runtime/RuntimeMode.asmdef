@@ -4,7 +4,7 @@
     "references": [
         "UnityEngine.TestRunner",
         "MultiRun.Editor",
-        "Bitwesgames.MultiRun"
+        "Bitwes.MultiRun"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
