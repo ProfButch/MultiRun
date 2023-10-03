@@ -12,7 +12,7 @@ using MultiRun.Cli;
 
 namespace MultiRun {
 
-    public class MultiRunEditor{
+    public class BuildTools { 
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
         private static OsHelper osHelper = new OsHelper();
 
@@ -41,9 +41,12 @@ namespace MultiRun {
          * https://answers.unity.com/questions/1128694/how-can-i-get-a-list-of-all-scenes-in-the-build.html
          *
          * This will get all the scenes that have been configured in the build
-         * settings.  If you specify a path for runScenePath then it will put that
+         * settings.  
+         * 
+         * If you specify a path for runScenePath then it will put that
          * path at the start of the array instead of its default spot in the list
-         * (if it has one).
+         * (if it has one).  This also allows for building a scene that has not
+         * been added to the build settings.
          */
         private string[] getBuildScenes(string runScenePath = "") {
             List<string> scenes = new List<string>();
@@ -84,10 +87,10 @@ namespace MultiRun {
         public void RunBuildX(string path, int i)
         {
             Dictionary<string, object> args = new Dictionary<string, object>();
-            string moreArgs = MultiRunSettings.instance.allInstanceArgs + " ";
+            string moreArgs = ProjectSettings.instance.allInstanceArgs + " ";
 
-            if (MultiRunSettings.instance.arrangeWindows) {
-                moreArgs += MultiRunSettings.instance.instanceArgs[i] + " ";
+            if (ProjectSettings.instance.arrangeWindows) {
+                moreArgs += ProjectSettings.instance.instanceArgs[i] + " ";
                 if (i == 0) {
                     args[ArgDef.ARG_WINDOW_ARRANGEMENT] = WindowPositioner.ARRANGE_TOP_LEFT;
                 } else if (i == 1) {
@@ -99,8 +102,7 @@ namespace MultiRun {
                 }
             }
 
-
-            if (MultiRunSettings.instance.disableLogStackTrace) {
+            if (ProjectSettings.instance.disableLogStackTrace) {
                 args[ArgDef.ARG_DISABLE_LOG_STACK_TRACE] = true;
             }
 
@@ -168,8 +170,8 @@ namespace MultiRun {
 
 
         public string GetBuildPath() {
-            if (MultiRunSettings.instance.projectBuildPath != string.Empty) {
-                return MultiRunSettings.instance.projectBuildPath;
+            if (ProjectSettings.instance.projectBuildPath != string.Empty) {
+                return ProjectSettings.instance.projectBuildPath;
             } else {
                 return buildPath;
             }

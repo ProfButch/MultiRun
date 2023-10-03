@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace MultiRun
 {
-    public static class MultiRunStatic
+    public static class Runner
     {
         private static Cli.Parser cmdArgs;
        

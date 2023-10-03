@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+
 namespace MultiRun
 {
     [FilePath("UserSettings/MultiRun.yaml", FilePathAttribute.Location.ProjectFolder)]
-    public class MultiRunSettings : ScriptableSingleton<MultiRunSettings>
+    public class ProjectSettings : ScriptableSingleton<ProjectSettings>
     {
         [SerializeField]
         public bool disableLogStackTrace = true;

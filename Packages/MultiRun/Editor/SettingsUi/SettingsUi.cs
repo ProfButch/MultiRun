@@ -77,10 +77,10 @@ namespace MultiRun
 
 
         private void LoadValues() {
-            var mrsi = MultiRunSettings.instance;
+            var mrsi = ProjectSettings.instance;
 
             // Build Settings
-            txtGlobalBuildPath.value = MultiRunMenu.mre.buildPath;
+            txtGlobalBuildPath.value = MultiRunMenu.buildTools.buildPath;
             txtProjectBuildPath.value = mrsi.projectBuildPath;
 
 
@@ -193,7 +193,7 @@ namespace MultiRun
             string result = getFilePathFromUser(txtProjectBuildPath.value);
             if (result != string.Empty) {
                 txtProjectBuildPath.value = result;
-                MultiRunSettings.instance.projectBuildPath = result;
+                ProjectSettings.instance.projectBuildPath = result;
             }
         }
 
@@ -234,9 +234,9 @@ namespace MultiRun
         public override void SaveChanges() {
             Debug.Log("Saving");
 
-            MultiRunMenu.mre.buildPath = txtGlobalBuildPath.value;
+            MultiRunMenu.buildTools.buildPath = txtGlobalBuildPath.value;
 
-            var mrsi = MultiRunSettings.instance;
+            var mrsi = ProjectSettings.instance;
             mrsi.arrangeWindows = tglArrangeWindows.value;
             mrsi.disableLogStackTrace = tglDisableLogStackTrace.value;
             mrsi.projectBuildPath = txtProjectBuildPath.value;
@@ -246,7 +246,7 @@ namespace MultiRun
             mrsi.instanceArgs[2] = instanceSettings[2].txtArguments.value;
             mrsi.instanceArgs[3] = instanceSettings[3].txtArguments.value;
 
-            MultiRunSettings.instance.DoSave();
+            ProjectSettings.instance.DoSave();
             MarkUnchanged();
             base.SaveChanges();
         }

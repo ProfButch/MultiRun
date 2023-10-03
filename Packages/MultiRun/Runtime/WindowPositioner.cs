@@ -11,6 +11,7 @@ namespace MultiRun
         public const string ARRANGE_BOTTOM_RIGHT = "br";
         public const string ARRANGE_NONE = "none";
 
+
         public static void MoveWindow(int x = 100, int y = 100) {
             List<DisplayInfo> displays = new List<DisplayInfo>();
             Screen.GetDisplayLayout(displays);
