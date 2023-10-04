@@ -56,6 +56,10 @@ __Important__ Instances are launched with the `--logfile` argument, and the log 
 ## Misc
 All settings are saved in the `UserSettings/MultiRun.yaml`
 
+<br>
+<br>
+<br>
+<br>
 
 
 # Logviewer (alpha)
@@ -64,6 +68,10 @@ The Log Viewer is rough.  Unity evidently can't display more than  ~3k character
 Also, everytime scripts get compiled the contents of the Log Viewer are cleared.
 
 
+<br>
+<br>
+<br>
+<br>
 
 
 # Known Issues
