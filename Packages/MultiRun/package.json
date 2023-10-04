@@ -4,11 +4,11 @@
   "displayName": "MultiRun",
   "description": "Tools for building and running multiple instances of a game.",
   "unity": "2021.3",
-  "documentationUrl": "https://example.com",
-  "changelogUrl": "https://example.com",
-  "licensesUrl": "https://example.com",
+  "documentationUrl": "https://github.com/ProfButch/MultiRun/blob/main/README.md",
+  "changelogUrl": "https://github.com/ProfButch/MultiRun/blob/main/CHANGES.md",
+  "licensesUrl": "https://github.com/ProfButch/MultiRun/blob/main/LICENSE",
   "author": {
-    "name": "Butch Wesley",
+    "name": "bitwes",
     "email": "butch@bitwesgames.com",
     "url": "https://bitwesgames.com"
   },
