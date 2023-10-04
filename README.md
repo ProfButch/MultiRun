@@ -16,7 +16,7 @@ For a full list of Unity command line arguments see:  https://docs.unity3d.com/M
 
 
 
-# Install
+## Install
 Install using the Package Manager and "Add package from git URL" using the the URL below:
 ```
 https://github.com/ProfButch/MultiRun.git?path=Packages/MultiRun
@@ -25,15 +25,18 @@ https://github.com/ProfButch/MultiRun.git?path=Packages/MultiRun
 
 
 
-# Setup
+## Setup
 Configure a directory and file name to build to, using MultiRun->Settings and you're ready to go.
 
-All settings are saved in the `UserSettings/MultiRun.yaml`
+<br>
+<br>
+<br>
+<br>
 
+# Building and Running
+It mostly works exactly how you'd expect, but there's some nuances.  This is where we cover that.
 
-
-
-# Building
+## Building
 There are two build paths, one which is stored at the Editor level which will be set for all projects, and another that you can set per proejct.  You must have at least one of these set to enable the menus.  The project build path will always be used if set.
 
 Once Set you can use "Build", "Build Current Scene" or "Build and Run" to build the project to the file you specified in the build path.
@@ -44,13 +47,14 @@ Once Set you can use "Build", "Build Current Scene" or "Build and Run" to build 
 When using "Build Current Scene" use the "Run" menu item and not "Build and Run" since that will overwite the build.
 
 
-
-
-# Running
+## Running
 You can build and run up to 4 instances in one step using "Build and Run -> [1-4]".  If you already have a build (such as when using "Build Current Scene") you can use "Run -> [1-4]" to launch up to 4 instaces of your game.
 
 __Important__ Instances are launched with the `--logfile` argument, and the log file name is specific to each instance number.  This means that if you launch more instances while other instances are still running then they will write to the same log file.  For example, if you launch 4 instances, then launch one additional instance then instance 1 and 5 will be writing to the same log.
 
+
+## Misc
+All settings are saved in the `UserSettings/MultiRun.yaml`
 
 
 
