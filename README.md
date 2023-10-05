@@ -14,19 +14,16 @@ Build and run one or more instances of your Unity game easily.
 For a full list of Unity command line arguments see:  https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html
 
 
-
-
 ## Install
 Install using the Package Manager and "Add package from git URL" using the the URL below:
 ```
 https://github.com/ProfButch/MultiRun.git?path=Packages/MultiRun
 ```
-
-
+Once installed you'll see the `MultiRun` menu in the menu bar.
 
 
 ## Setup
-Configure a directory and file name to build to, using MultiRun->Settings and you're ready to go.
+Configure a directory and file name to build to, using `MultiRun -> Settings` and you're ready to go.
 
 <br>
 <br>
