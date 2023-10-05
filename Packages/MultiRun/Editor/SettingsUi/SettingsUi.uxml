@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="IndividualRunSettings" src="project://database/Packages/com.bitwes.multirun/Editor/IndividualRunSettings.uxml?fileID=9197481963319205126&amp;guid=322861579a27a495bb94134e27df9589&amp;type=3#IndividualRunSettings" />
+    <ui:Template name="IndividualRunSettings" src="project://database/Packages/com.bitwes.multirun/Editor/SettingsUi/IndividualRunSettings.uxml?fileID=9197481963319205126&amp;guid=322861579a27a495bb94134e27df9589&amp;type=3#IndividualRunSettings" />
     <ui:ScrollView name="MainScroll">
         <ui:VisualElement name="BuildSettings">
             <ui:Label text="Build Settings" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: upper-center; background-color: rgb(0, 0, 0);" />
