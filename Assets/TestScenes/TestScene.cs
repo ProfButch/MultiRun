@@ -1,26 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using MultiRun;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class TestScene : MonoBehaviour
 {
-    float logTime = 1.0f;
+    float logTime = 5f;
     float timeElapsed = 0.0f;
+    int logCount = 0;
 
+    public Button btnSceneTwo;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        btnSceneTwo.onClick.AddListener(OnSceneTwoClicked);
     }
 
+    private void OnSceneTwoClicked() {
+        Debug.Log("clicked");
+        SceneManager.LoadScene("SceneTwo");
+    }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         timeElapsed += Time.deltaTime;
-        if(timeElapsed > logTime){
-            Debug.Log($"Logging a message");
+        if(logTime == -1 || timeElapsed > logTime){
+            logCount += 1;
+            Debug.Log($"Logging a message {logCount}");
             timeElapsed = 0.0f;
         }
     }

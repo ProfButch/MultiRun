@@ -170,7 +170,7 @@ namespace MultiRun {
         }
 
 
-        [MenuItem("MultiRun/Show Files", false, 999)]
+        [MenuItem("MultiRun/Open Build Directory", false, 999)]
         private static void MnuViewFiles() {
             SaveSettingsIfOpen();
             string parentDir = Path.GetDirectoryName(buildTools.GetBuildPath());

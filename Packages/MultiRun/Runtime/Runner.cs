@@ -1,9 +1,24 @@
 using UnityEngine;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 namespace MultiRun
 {
+    public class MultiRunMono : MonoBehaviour
+    {
+        private void Awake()
+        {
+            Debug.Log("----------------- Awake -----------------");
+            DontDestroyOnLoad(this.gameObject);
+        }
+
+        private void OnApplicationQuit() {
+            Debug.Log("----------------- Application quit -----------------");
+        }
+    }
+
+
     public static class Runner {
         private static Cli.Parser cmdArgs;
         private static bool hasInitialized = false;
@@ -18,13 +33,41 @@ namespace MultiRun
                 return;
             }
 
+            ApplyCliArgs();
+            AddMultiRunMonToStartScene();
+            hasInitialized = true;
+        }
+
+        private static void ApplyCliArgs()
+        {
             cmdArgs = new Cli.Parser();
             WindowPositioner.ArrangeWindow(cmdArgs.windowArrangement);
-            if (cmdArgs.disableDebugLogStackTrace) {
+            if (cmdArgs.disableDebugLogStackTrace)
+            {
                 Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
             }
+        }
 
-            hasInitialized = true;
+
+        private static async void AddMultiRunMonToStartScene()
+        {
+            Scene active = SceneManager.GetActiveScene();
+            Debug.Log($"active scene = {active}::{active.name}::{active.isLoaded}");
+            int waitLimit = 30;
+            int waited = 0;
+            while (waited < waitLimit && !active.isLoaded)
+            {
+                await Task.Yield();
+                Debug.Log($"active scene = {active}::{active.name}::{active.isLoaded}");
+            }
+
+            if (active.isLoaded)
+            {
+                GameObject toAdd = new GameObject("MultiRunMonoGO");
+                SceneManager.MoveGameObjectToScene(toAdd, active);
+                toAdd.AddComponent<MultiRunMono>();
+                
+            }
         }
     }
 }
