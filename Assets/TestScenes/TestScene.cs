@@ -4,14 +4,13 @@ using UnityEngine.SceneManagement;
 
 public class TestScene : MonoBehaviour
 {
-    float logTime = 5f;
+    float logTime = 1f;
     float timeElapsed = 0.0f;
     int logCount = 0;
 
     public Button btnSceneTwo;
 
-    private void Start()
-    {
+    private void Start() {
         btnSceneTwo.onClick.AddListener(OnSceneTwoClicked);
     }
 
