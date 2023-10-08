@@ -4,26 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
+using UnityEditor.MPE;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
 namespace MultiRun {
-    public class LogDisplayTailer : MonoBehaviour {
+    public class LogDisplayTailer : LogDisplay {
 
-        public int readSize = 1024 * 2;
-        public int maxStringSize = 5000;
-        public int endOfFileBytes = 1024 * 8;
-        public string logPath = string.Empty;
-
-        // -- Controls --
-        public VisualElement root;
-        public Label title;
-        public Label logText;
-        public ToolbarButton btnMaximize;
-        private ScrollView scrollView;
-        private Scroller vertScroll;
-        private Scroller horizScroll;
+        public int endOfFileBytes = 1024 * 10;
 
         // -- Other vars --        
         private long lastFileSize = 0;
@@ -31,28 +21,8 @@ namespace MultiRun {
         private TextField theField;
 
 
-        public LogDisplayTailer(VisualElement baseElement) {
-            SetupControls(baseElement);            
-        }
-
-
-        public LogDisplayTailer(VisualElement baseElement, string path) {
-            SetupControls(baseElement);
-            logPath = path;
-        }
-
-
-        private void SetupControls(VisualElement baseElement)
-        {
-            root = baseElement;
-            title = root.Query<Label>("Title").First();
-            logText = root.Query<Label>("LogText").First();
-            vertScroll = root.Query<ScrollView>().First().verticalScroller;
-            horizScroll = root.Query<ScrollView>().First().horizontalScroller;
-            btnMaximize = root.Query<ToolbarButton>("Maximize").First();
-            scrollView = root.Query<ScrollView>().First();
-            Clear();
-        }
+        public LogDisplayTailer() {}        public LogDisplayTailer(VisualElement baseElement) : base(baseElement){}
+        public LogDisplayTailer(VisualElement baseElement, string path) : base(baseElement, path){ }
 
 
         private TextField AddLabel(string text) {
@@ -75,18 +45,8 @@ namespace MultiRun {
                 theField = AddLabel("");
             }
 
-            theField.value = text;
+            theField.value = text;            
         }
-
-
-        private void UpdateTitle() {
-            if (logPath == string.Empty) {
-                title.text = "<no log file specified>";
-            } else {
-                title.text = $"{Path.GetFileName(logPath)}";
-            }
-        }
-
 
 
         /**
@@ -117,6 +77,9 @@ namespace MultiRun {
         }
 
 
+        // -----------------------------
+        // Public
+        // -----------------------------
         public void ReadLog() {
             UpdateTitle();
 
@@ -140,7 +103,7 @@ namespace MultiRun {
         }
 
 
-        public string GetText() {
+        public override string GetText() {
             string toReturn = string.Empty;
             if (theField != null) {
                 toReturn = theField.value;
@@ -149,38 +112,9 @@ namespace MultiRun {
         }
 
 
-        public void Clear() {
-            scrollView.Clear();
+        public override void Clear() {
+            base.Clear();
             theField = null;
         }
-
-
-        public void SetFontSize(float newSize) {
-            float adjustedSize = Math.Clamp(newSize, 5.0f, 50.0f);
-            scrollView.style.fontSize = adjustedSize;
-        }
-
-
-        public void IncrementFontSize(float howMuch) {
-            SetFontSize(GetFontSize() + howMuch);
-        }
-
-
-        public float GetFontSize() {
-            return scrollView.resolvedStyle.fontSize;
-        }
-
-
-        public void ScrollToBottom() {
-            vertScroll.value = vertScroll.highValue;
-            horizScroll.value = 0;
-        }
-
-
-        public void ScrollToTop() {
-            vertScroll.value = 0;
-            horizScroll.value = 0;
-        }
-
     }
 }

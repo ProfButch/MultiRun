@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class TestScene : MonoBehaviour
 {
-    float logTime = 1f;
+    float logTime = -1f;
     float timeElapsed = 0.0f;
     int logCount = 0;
 
@@ -21,7 +21,7 @@ public class TestScene : MonoBehaviour
 
     void Update() {
         timeElapsed += Time.deltaTime;
-        if(logTime == -1 || timeElapsed > logTime){
+        if(timeElapsed > logTime){
             logCount += 1;
             Debug.Log($"Logging a message {logCount}");
             timeElapsed = 0.0f;
