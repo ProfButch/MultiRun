@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class TestScene : MonoBehaviour
 {
-    float logTime = -1f;
+    float logTime = .5f;
     float timeElapsed = 0.0f;
     int logCount = 0;
 

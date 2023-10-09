@@ -52,7 +52,7 @@ public class TestLogDisplay
 
     public class TestLogDisplayTailer
     {
-        private LogDisplay NewLogDisplay()
+        private LogDisplayTailer NewLogDisplay()
         {
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
                     "Packages/com.bitwes.MultiRun/Editor/LogViewer/LogDisplay.uxml");
@@ -69,6 +69,41 @@ public class TestLogDisplay
             Assert.NotNull(ld, "the thing itself");
             Assert.NotNull(ld.root, "root");
             Assert.NotNull(ld.btnMaximize, "btnMaximize");
+        }
+
+        [Test]
+        public void TestAddTailTextGetText()
+        {
+            var ld = NewLogDisplay();
+            ld.AddTailText("hello world");
+            Assert.AreEqual("hello world", ld.GetText());
+        }
+
+        [Test]
+        public void TestTextIsTruncatedToMaxStringSize()
+        {
+            var ld = NewLogDisplay();
+            ld.maxStringSize = 5;
+            ld.AddTailText("123456");
+            Assert.AreEqual("23456", ld.GetText());
+        }       
+
+        [Test]
+        public void TestTextIsClearedWhenClared()
+        {
+            var ld = NewLogDisplay();
+            ld.AddTailText("Hello");
+            ld.Clear();
+            Assert.AreEqual(string.Empty, ld.GetText());
+        }
+
+        [Test]
+        public void TestNoGhostsOfTextPastAfterClear() {
+            var ld = NewLogDisplay();
+            ld.AddTailText("Hello");
+            ld.Clear();
+            ld.AddTailText("World");
+            Assert.AreEqual("World", ld.GetText());
         }
     }
 

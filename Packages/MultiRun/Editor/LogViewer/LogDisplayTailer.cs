@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
+using System.Xml;
 using UnityEditor.MPE;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -13,18 +14,95 @@ using UnityEngine.UIElements;
 namespace MultiRun {
     public class LogDisplayTailer : LogDisplay {
 
-        public int endOfFileBytes = 1024 * 10;
+        private class TailFile
+        {            
+            // 10 seems to be about the limit.  Ran into excess vertex errors at 15.
+            public int amountToRead = 1024 * 10;
+            public int readIncrementSize = 1024 * 2;
+            public string filePath = string.Empty;
 
-        // -- Other vars --        
+
+            private long endReadLoc = 0;
+            private long lastFileSize = 0;
+
+            
+            /**
+             * Brute force, reads the last `bytes` and puts it into the log display.
+             */
+            private string DoRead(long fileSize) {
+                string toReturn = string.Empty;
+                try {
+                    long seekTo = Math.Max(fileSize - amountToRead, 0);
+                    seekTo = Math.Max(seekTo, endReadLoc);
+
+                    using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+                        fs.Seek(seekTo, SeekOrigin.Begin);
+                        var buffer = new byte[readIncrementSize];
+                        bool foundData = true;
+                        
+                        while (foundData) {
+                            var bytesRead = fs.Read(buffer, 0, buffer.Length);
+                            foundData = bytesRead != 0;
+                            endReadLoc += bytesRead;
+
+                            if (foundData) {
+                                toReturn += ASCIIEncoding.ASCII.GetString(buffer, 0, bytesRead);
+                            }
+                        }
+                    }
+                } catch { }
+                return toReturn;
+            }
+
+
+            public string ReadEndOfFile() {
+                string toReturn = string.Empty;
+                long fileSize = new FileInfo(filePath).Length;
+
+                if(fileSize < lastFileSize) {
+                    Reset();
+                }                
+
+                if(fileSize > lastFileSize) {
+                    toReturn = DoRead(fileSize);
+                }
+                lastFileSize = fileSize;
+
+                return toReturn;
+            }
+
+
+            public void Reset() {
+                lastFileSize = 0;
+                endReadLoc = 0;
+            }
+        }
+       
+
+        private int maxTailBufferLength = 0;
         private long lastFileSize = 0;
-        private long lastReadLength = 0;
+        private string tailBuffer = string.Empty;
         private TextField theField;
+        private TailFile tailFile = new TailFile();
 
 
-        public LogDisplayTailer() {}        public LogDisplayTailer(VisualElement baseElement) : base(baseElement){}
-        public LogDisplayTailer(VisualElement baseElement, string path) : base(baseElement, path){ }
+        public LogDisplayTailer() : base() {            Init();        }        public LogDisplayTailer(VisualElement baseElement) : base(baseElement){
+            Init();
+        }
+
+        public LogDisplayTailer(VisualElement baseElement, string path) : base(baseElement, path){
+            Init();
+        }
 
 
+        private void Init() {
+            maxTailBufferLength = 5 * maxStringSize;
+        }
+
+
+        // --------------------------------------
+        // Private
+        // --------------------------------------
         private TextField AddLabel(string text) {
             var lbl = new TextField();
             lbl.isReadOnly = true;
@@ -39,7 +117,7 @@ namespace MultiRun {
             return lbl;
         }
 
-        
+
         private void SetText(string text) {
             if (theField == null) {
                 theField = AddLabel("");
@@ -49,37 +127,32 @@ namespace MultiRun {
         }
 
 
-        /**
-         * Brute force, reads the last `bytes` and puts it into the log display.
-         */
-        private void ReadEndOfFile(long bytes) {
-            try {
-                long fileSize = new FileInfo(logPath).Length;
-                string allText = string.Empty;
-                using (var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
-                    long seekpoint = Math.Clamp(fileSize - bytes, 0, fileSize);
-                    fs.Seek(seekpoint, SeekOrigin.Begin);
-                    var buffer = new byte[readSize];
-                    bool foundData = true;
-
-                    while (foundData) {
-                        var bytesRead = fs.Read(buffer, 0, buffer.Length);
-                        foundData = bytesRead != 0;
-                        if (foundData) {
-                            allText += ASCIIEncoding.ASCII.GetString(buffer, 0, bytesRead);
-                        }
-                    }
-                }
-
-                SetText(allText);
-                ScrollToBottom();
-            } catch { }
-        }
-
-
         // -----------------------------
         // Public
         // -----------------------------
+
+        // Adds text to the tailBuffer, truncates tailBuffer occasionally, sends
+        // maxStringSize chars from the end of tailBuffer to SetText().
+        public void AddTailText(string text) {
+            tailBuffer += text;
+
+            // This might be too smart, but don't truncate the buffer until it
+            // reaches 2x the size, just to cut down on substrings. Probably
+            // premature optimization.
+            int truncateLength = 2 * maxTailBufferLength;
+            if(tailBuffer.Length > truncateLength) {
+                tailBuffer = tailBuffer.Substring(tailBuffer.Length - maxTailBufferLength);
+            }
+
+            string dispText = string.Empty;
+            if(tailBuffer.Length > maxStringSize) {
+                SetText(tailBuffer.Substring(tailBuffer.Length - maxStringSize));
+            } else {
+                SetText(tailBuffer);
+            }
+        }
+
+
         public void ReadLog() {
             UpdateTitle();
 
@@ -89,17 +162,18 @@ namespace MultiRun {
             }
 
             long fileSize = new FileInfo(logPath).Length;
-
-            if (fileSize < lastFileSize) {
+            if(fileSize < lastFileSize) {
                 Clear();
-                lastReadLength = 0;
             }
-
-            if (fileSize > lastFileSize) {
-                ReadEndOfFile(endOfFileBytes);
-            }
-
             lastFileSize = fileSize;
+
+            tailFile.filePath = logPath;
+
+            string result = tailFile.ReadEndOfFile();
+            AddTailText(result);
+            if(result.Length > 0) {
+                ScrollToBottom();                
+            }            
         }
 
 
@@ -115,6 +189,8 @@ namespace MultiRun {
         public override void Clear() {
             base.Clear();
             theField = null;
+            tailBuffer = string.Empty;
+            lastFileSize = 0;
         }
     }
 }
