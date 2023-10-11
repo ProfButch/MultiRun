@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace MultiRun
 {
+    // This is how we can be notified that the application has terminated.
     public class MultiRunMono : MonoBehaviour
     {
-        private void Awake()
-        {
+        private void Awake() {
             Debug.Log("----------------- Awake -----------------");
             DontDestroyOnLoad(this.gameObject);
         }
@@ -17,6 +17,8 @@ namespace MultiRun
             Debug.Log("----------------- Application quit -----------------");
         }
     }
+
+
 
 
     public static class Runner {
@@ -34,7 +36,7 @@ namespace MultiRun
             }
 
             ApplyCliArgs();
-            AddMultiRunMonToStartScene();
+            //AddMultiRunMonToStartScene();
             hasInitialized = true;
         }
 
@@ -49,20 +51,16 @@ namespace MultiRun
         }
 
 
-        private static async void AddMultiRunMonToStartScene()
-        {
+        private static async void AddMultiRunMonoToActiveScene() {
             Scene active = SceneManager.GetActiveScene();
-            Debug.Log($"active scene = {active}::{active.name}::{active.isLoaded}");
             int waitLimit = 30;
             int waited = 0;
-            while (waited < waitLimit && !active.isLoaded)
-            {
+
+            while (waited < waitLimit && !active.isLoaded) {
                 await Task.Yield();
-                Debug.Log($"active scene = {active}::{active.name}::{active.isLoaded}");
             }
 
-            if (active.isLoaded)
-            {
+            if (active.isLoaded) {
                 GameObject toAdd = new GameObject("MultiRunMonoGO");
                 SceneManager.MoveGameObjectToScene(toAdd, active);
                 toAdd.AddComponent<MultiRunMono>();

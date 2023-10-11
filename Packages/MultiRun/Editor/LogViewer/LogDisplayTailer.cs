@@ -77,7 +77,7 @@ namespace MultiRun {
                 endReadLoc = 0;
             }
         }
-       
+
 
         private int maxTailBufferLength = 0;
         private long lastFileSize = 0;
