@@ -15,9 +15,13 @@ namespace MultiRun {
     public class LogDisplayTailer : LogDisplay {
 
         private class TailFile
-        {            
-            // 10 seems to be about the limit.  Ran into excess vertex errors at 15.
-            public int amountToRead = 1024 * 10;
+        {
+            // This has to be big enough that when the app quits it can hold all
+            // the junk that Unity spits out.  Otherwise we don't always see the
+            // EOF_delim.  We could get rid of this, but then we'd be reading the
+            // entire file and that might have some consequences.  So this
+            // stays for now, until I can get smarter about it.
+            public int amountToRead = 1024 * 20;
             public int readIncrementSize = 1024 * 2;
             public string filePath = string.Empty;            
 
@@ -25,9 +29,6 @@ namespace MultiRun {
             private long lastFileSize = 0;
 
             
-            /**
-             * Brute force, reads the last `bytes` and puts it into the log display.
-             */
             private string DoRead(long fileSize) {
                 string toReturn = string.Empty;
                 try {

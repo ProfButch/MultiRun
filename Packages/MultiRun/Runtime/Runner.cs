@@ -9,12 +9,14 @@ namespace MultiRun
     public class MultiRunMono : MonoBehaviour
     {
         private void Awake() {
-            Debug.Log("----------------- Awake -----------------");
             DontDestroyOnLoad(this.gameObject);
         }
 
-        private void OnApplicationQuit() {
+        private async void OnApplicationQuit() {
             Debug.Log("----------------- Application quit -----------------");
+            Debug.Log("-- multi run EOF --");
+            await Task.Yield();
+            await Task.Yield();
         }
     }
 
@@ -36,7 +38,7 @@ namespace MultiRun
             }
 
             ApplyCliArgs();
-            //AddMultiRunMonToStartScene();
+            AddMultiRunMonoToActiveScene();
             hasInitialized = true;
         }
 

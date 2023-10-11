@@ -17,6 +17,7 @@ namespace MultiRun
     public static class MuRu
     {
         private const string PRE = "[MultiRun]";
+        public const string EOF_DELIM = "-- multi run EOF --";
 
         public static void Log(string msg) {
             Debug.Log($"{PRE}{msg}");
