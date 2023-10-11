@@ -105,6 +105,59 @@ public class TestLogDisplay
             ld.AddTailText("World");
             Assert.AreEqual("World", ld.GetText());
         }
+
+        [Test]
+        public void TestIgnoreAfterEmptyByDefault()
+        {
+            var ld = NewLogDisplay();
+            Assert.AreEqual(string.Empty, ld.ignoreAllAfterDelimiter);
+        }
+
+        [Test]
+        public void TestWhenIgnoreAfterSetThenAnythingAddedAfterIsIgnored()
+        {
+            string delim = "--ignore--";
+            var ld = NewLogDisplay();
+            ld.ignoreAllAfterDelimiter = delim;
+            ld.AddTailText("hello\n");
+            ld.AddTailText("world");
+            ld.AddTailText(delim);
+            ld.AddTailText("poop");
+            Assert.AreEqual("hello\nworld", ld.GetText());
+        }
+
+        [Test]
+        public void TestWhenIgnoreAfterSetIncludesPreDelimChars() {
+            string delim = "--ignore--";
+            var ld = NewLogDisplay();
+            ld.ignoreAllAfterDelimiter = delim;
+            ld.AddTailText("hello\n");
+            ld.AddTailText("world");
+            ld.AddTailText($"look{delim}here");
+            Assert.AreEqual("hello\nworldlook", ld.GetText());
+        }
+
+        [Test]
+        public void TestCanAddTextAgainEncounteringIgnoreAfterAndThenCleaing()
+        {
+            string delim = "--ignore--";
+            var ld = NewLogDisplay();
+            ld.ignoreAllAfterDelimiter = delim;
+            ld.AddTailText("world");
+            ld.AddTailText(delim);
+            ld.AddTailText("nope");
+            ld.Clear();
+            ld.AddTailText("THIS");
+            Assert.AreEqual("THIS", ld.GetText());
+        }
+
+        [Test]
+        public void TestClearDoesNotResetIgnoreAfterDelim() {
+            var ld = NewLogDisplay();
+            ld.ignoreAllAfterDelimiter = "cool";
+            ld.Clear();
+            Assert.AreEqual("cool", ld.ignoreAllAfterDelimiter);
+        }
     }
 
 

@@ -19,8 +19,7 @@ namespace MultiRun {
             // 10 seems to be about the limit.  Ran into excess vertex errors at 15.
             public int amountToRead = 1024 * 10;
             public int readIncrementSize = 1024 * 2;
-            public string filePath = string.Empty;
-
+            public string filePath = string.Empty;            
 
             private long endReadLoc = 0;
             private long lastFileSize = 0;
@@ -79,6 +78,9 @@ namespace MultiRun {
         }
 
 
+        public string ignoreAllAfterDelimiter = string.Empty;
+        private bool encounteredIgnoreAfterDelim = false;
+
         private int maxTailBufferLength = 0;
         private long lastFileSize = 0;
         private string tailBuffer = string.Empty;
@@ -134,7 +136,19 @@ namespace MultiRun {
         // Adds text to the tailBuffer, truncates tailBuffer occasionally, sends
         // maxStringSize chars from the end of tailBuffer to SetText().
         public void AddTailText(string text) {
+            if (encounteredIgnoreAfterDelim) {
+                return;
+            }
+
             tailBuffer += text;
+
+            if(ignoreAllAfterDelimiter != string.Empty) {                
+                int idx = tailBuffer.IndexOf(ignoreAllAfterDelimiter);
+                if(idx != -1) {
+                    encounteredIgnoreAfterDelim = true;
+                    tailBuffer = tailBuffer.Substring(0, idx);
+                }
+            }
 
             // This might be too smart, but don't truncate the buffer until it
             // reaches 2x the size, just to cut down on substrings. Probably
@@ -191,6 +205,7 @@ namespace MultiRun {
             theField = null;
             tailBuffer = string.Empty;
             lastFileSize = 0;
+            encounteredIgnoreAfterDelim = false;
         }
     }
 }
