@@ -66,7 +66,7 @@ namespace MultiRun
             }
 
             if (active.isLoaded) {
-                GameObject toAdd = new GameObject("MultiRunMonoGO");
+                GameObject toAdd = new GameObject("MultiRunGameObject");
                 SceneManager.MoveGameObjectToScene(toAdd, active);
                 toAdd.AddComponent<MultiRunMono>();
                 

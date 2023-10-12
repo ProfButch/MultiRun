@@ -15,7 +15,7 @@ namespace MultiRun {
         public static BuildTools buildTools = new BuildTools();
 
         private static void ShowLogs() {
-            var window = EditorWindow.GetWindow<LogViewer>();
+            var window = EditorWindow.GetWindow<LogViewer>("Log Watcher");
             window.basePath = Path.Join(Path.GetDirectoryName(buildTools.GetBuildPath()), Path.GetFileNameWithoutExtension(buildTools.GetBuildPath()));
             window.ShowPopup();
             window.LoadLogs();
