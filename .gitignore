@@ -4,6 +4,7 @@
 **/.DS_Store
 mono_crash.*
 .vsconfig
+/Assets/TextMesh Pro/
 
 # ------------------------------------------------------------------------------
 # Unity template

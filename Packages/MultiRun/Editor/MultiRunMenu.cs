@@ -15,7 +15,7 @@ namespace MultiRun {
         public static BuildTools buildTools = new BuildTools();
 
         private static void ShowLogs() {
-            var window = EditorWindow.GetWindow<MultiRun.LogViewer>();
+            var window = EditorWindow.GetWindow<LogViewer>("Log Watcher");
             window.basePath = Path.Join(Path.GetDirectoryName(buildTools.GetBuildPath()), Path.GetFileNameWithoutExtension(buildTools.GetBuildPath()));
             window.ShowPopup();
             window.LoadLogs();
@@ -170,7 +170,7 @@ namespace MultiRun {
         }
 
 
-        [MenuItem("MultiRun/Show Files", false, 999)]
+        [MenuItem("MultiRun/Open Build Directory", false, 999)]
         private static void MnuViewFiles() {
             SaveSettingsIfOpen();
             string parentDir = Path.GetDirectoryName(buildTools.GetBuildPath());

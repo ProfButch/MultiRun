@@ -28,6 +28,8 @@ namespace MultiRun
             string.Empty
         };
 
+         public string lastLoadedLogPath = string.Empty;
+
         public void DoSave()
         {
             Save(true);

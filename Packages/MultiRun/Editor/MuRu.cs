@@ -17,6 +17,9 @@ namespace MultiRun
     public static class MuRu
     {
         private const string PRE = "[MultiRun]";
+        // Keep in sync with MultiRunMono until we can refactor this out into a
+        // common library used by editor and runner.
+        public const string APP_END_IND = "-- MultiRun Application End Indicator --";
 
         public static void Log(string msg) {
             Debug.Log($"{PRE}{msg}");

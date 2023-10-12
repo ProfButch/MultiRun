@@ -2,14 +2,13 @@
 Build and run one or more instances of your Unity game easily.
 
 ## Features
-* Build and Run up to 4 instances of your game with just one click! _(technically two clicks; menu then menu item.  It could be one keystroke though, if you made a shortcut for it, which you can do easily)_
+* Generate a Build then Run up to 4 instances of your game with just one click! _(technically two clicks; menu then menu item.  It could be one keystroke though, if you made a shortcut for it, which you can do easily)_
 * A log file for each instance.
-* Add command line arguments for all instances.
-* Add command line arguments per instance.
+* Add command line arguments for each instance or all instances.
 * Create a build that runs the current scene first, without having to edit the build settings.
 * Automatically resize and position running instances (wihtout having to change player settings).
 * Automatically disable `Debug.Log`'s stack trace for instance logs.
-* View log contents directly in Unity (very very alpha, could be a fool's errand).
+* Watch instance logs directly in Unity (just the end though, Unity hates text).
 
 For a full list of Unity command line arguments see:  https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html
 
@@ -23,7 +22,7 @@ Once installed you'll see the `MultiRun` menu in the menu bar.
 
 
 ## Setup
-Configure a directory and file name to build to, using `MultiRun -> Settings` and you're ready to go.
+Configure a directory and file name to build to (`MultiRun -> Settings`) and you're ready to go.
 
 <br>
 <br>
@@ -31,17 +30,17 @@ Configure a directory and file name to build to, using `MultiRun -> Settings` an
 <br>
 
 # Building and Running
-It mostly works exactly how you'd expect, but there's some nuances.  This is where we cover that.
+It mostly works exactly how you'd expect, but there's some nuances.
 
 ## Building
-There are two build paths, one which is stored at the Editor level which will be set for all projects, and another that you can set per proejct.  You must have at least one of these set to enable the menus.  The project build path will always be used if set.
+There are two build paths, one which is stored at the Editor level which spans all projects, and another that you can set per proeject.  You must have at least one of these set to enable the menus.  The project build path takes precedence.
 
-Once Set you can use `Build`, `Build Current Scene` or `Build and Run` to build the project to the file you specified in the build path.
+Once Set you can use `Build`, `Build Current Scene` or `Build and Run` to generate a build.
 
 ### Build Current Scene
 `Build Current Scene` will generate a build with the current scene as the scene to be run first.  This only affects the build that is generated with this menu option.  The scene does not need to be in the Build Settings.
 
-When using `Build Current Scene` use `Run -> [1-4]` menu item and not `Build and Run` since that will overwite the build.
+When using `Build Current Scene` use `Run -> [1-4]` menu item and NOT `Build and Run` since that will overwite the build.
 
 
 ## Running
@@ -58,12 +57,12 @@ All settings are saved in the `UserSettings/MultiRun.yaml`
 <br>
 <br>
 
-# Logviewer (alpha)
-The Log Viewer is rough.  Unity evidently can't display more than  ~3k characters in a textbox?  [65k vertex limit](https://forum.unity.com/threads/ui-text-character-limit.359729/)?  It's an super fun juggling act of random file access and reading chunks of text and adding labels and appending to labels and finding new lines and removing new lines and other antics.  Looking for ideas, if you have one add an issue.
+# Log Watcher (alpha)
+The Log Watcher allows you to monitor the end of each of the instance logs.  Unity does not like to display large amounts of text (or what others might consider "a not small, but by no means large" amount of text), so you will still need another tool to view logs in their entirety.  You can use `Multi Run -> Open build directory` to quickly get to your log files.
 
-Also, everytime scripts get compiled the contents of the Log Viewer are cleared.
+The Log Watcher has some amount of smarts in it to ignore the large dump of memory allocation stats that Unity leaves at the end of logs.  It mostly works, but it could be better.  It uses crazy magic.  If you notice that you have a `DontDestroyOnLoad` object called `MultiRunGameObject`, this is part of the magic to detect the application closing.
 
-You should probably just `tail` them yourself or use something else to watch the logs.
+Due to a layout refresh issue, the Log Watcher is automatically closed everytime scripts are recompiled.  You can assign a keyboard shortcut to the Log Watcher menu item to make this less annoying.
 
 <br>
 <br>

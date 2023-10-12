@@ -1,27 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using MultiRun;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class TestScene : MonoBehaviour
 {
-    float logTime = 1.0f;
+    float logTime = .2f;
     float timeElapsed = 0.0f;
+    int logCount = 0;
 
+    public Button btnSceneTwo;
+    public Button btnPrintEof;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    private void Start() {
+        btnSceneTwo.onClick.AddListener(OnSceneTwoClicked);
+        btnPrintEof.onClick.AddListener(OnPrintEofClicked);
     }
 
+    private void OnSceneTwoClicked() {
+        Debug.Log("clicked");
+        SceneManager.LoadScene("SceneTwo");
+    }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         timeElapsed += Time.deltaTime;
         if(timeElapsed > logTime){
-            Debug.Log($"Logging a message");
+            logCount += 1;
+            Debug.Log($"Logging a message {logCount}");
             timeElapsed = 0.0f;
         }
+    }
+
+    void OnPrintEofClicked()
+    {
+        Debug.Log("-- multi run EOF --");
     }
 }

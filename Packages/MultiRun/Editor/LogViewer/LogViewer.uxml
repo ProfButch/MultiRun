@@ -1,11 +1,14 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:Template name="LogDisplay" src="project://database/Packages/com.bitwes.multirun/Editor/LogViewer/LogDisplay.uxml?fileID=9197481963319205126&amp;guid=885d1b69eec074aa4a3421eb78daed6a&amp;type=3#LogDisplay" />
-    <ui:Label text="&lt;Info&gt;" display-tooltip-when-elided="true" name="Info" style="-unity-text-align: upper-center;" />
+    <ui:Label text="&lt;Info&gt;" display-tooltip-when-elided="true" name="Info" enable-rich-text="false" style="-unity-text-align: upper-center;" />
     <uie:Toolbar>
+        <ui:Label text="Show Logs: " display-tooltip-when-elided="true" />
         <uie:ToolbarToggle focusable="false" value="true" name="ShowLog1" text="Log 1" tooltip="Show/Hide Log 1" style="flex-shrink: 1; min-width: auto; flex-basis: auto;" />
         <uie:ToolbarToggle focusable="false" value="true" name="ShowLog2" text="Log 2" tooltip="Show/Hide Log 2" style="flex-shrink: 1;" />
         <uie:ToolbarToggle focusable="false" value="true" name="ShowLog3" text="Log 3" tooltip="Show/Hide Log 3" style="flex-shrink: 1;" />
         <uie:ToolbarToggle focusable="false" value="true" name="ShowLog4" text="Log 4" tooltip="Show/Hide Log 4" style="flex-shrink: 1;" />
+        <uie:ToolbarSpacer style="flex-grow: 0; width: 10px;" />
+        <uie:ToolbarButton text="Restore" display-tooltip-when-elided="true" name="RestoreLayout" />
         <uie:ToolbarSpacer style="flex-grow: 1;" />
         <uie:ToolbarButton text="+" display-tooltip-when-elided="true" name="FontSizeUp" />
         <uie:ToolbarButton text="-" display-tooltip-when-elided="true" name="FontSizeDown" enable-rich-text="false" />
