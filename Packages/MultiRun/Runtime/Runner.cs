@@ -8,15 +8,18 @@ namespace MultiRun
     // This is how we can be notified that the application has terminated.
     public class MultiRunMono : MonoBehaviour
     {
+        // Keep in sync with MuRu until we can refactor this out into a common
+        // library used by editor and runner.
+        public const string APP_END_IND = "-- MultiRun Application End Indicator --";
+
         private void Awake() {
             DontDestroyOnLoad(this.gameObject);
         }
 
         private async void OnApplicationQuit() {
-            Debug.Log("----------------- Application quit -----------------");
-            Debug.Log("-- multi run EOF --");
-            await Task.Yield();
-            await Task.Yield();
+            // Spit out the APP_END_IND so that the log viewer knows where to
+            // to stop tailing the file.
+            Debug.Log(APP_END_IND);
         }
     }
 

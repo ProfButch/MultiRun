@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Remoting.Contexts;
 using System.Text;
-using System.Xml;
-using UnityEditor.MPE;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -148,6 +142,11 @@ namespace MultiRun {
                 if(idx != -1) {
                     encounteredIgnoreAfterDelim = true;
                     tailBuffer = tailBuffer.Substring(0, idx);
+                    tailBuffer += "\n\n" + 
+                        "---------- MultiRun ----------\n" +
+                        "-- Application quit detected, tailing log stopped.\n" +
+                        "-- There might be more output in the log file.\n" +
+                        "-------------------------------\n\n";
                 }
             }
 
