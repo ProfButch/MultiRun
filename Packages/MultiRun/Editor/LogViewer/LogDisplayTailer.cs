@@ -81,7 +81,8 @@ namespace MultiRun {
         private string tailBuffer = string.Empty;
         private TextField theField;
         private TailFile tailFile = new TailFile();
-
+        private Font font;
+        private Label lblEofDisclaimer;
 
         public LogDisplayTailer() : base() {            Init();        }        public LogDisplayTailer(VisualElement baseElement) : base(baseElement){
             Init();
@@ -94,6 +95,20 @@ namespace MultiRun {
 
         private void Init() {
             maxTailBufferLength = 5 * maxStringSize;
+            font = new Font("SourceCodePro-Regular");
+        }
+
+
+        private void AddDEofDisclaimerLabel()
+        {
+            if(lblEofDisclaimer == null)
+            {
+                lblEofDisclaimer = new Label();
+                lblEofDisclaimer.text =  
+                    "Application quit detected, tailing log stopped.\n" +
+                    "There might be more output in the log file.";
+                scrollView.Add(lblEofDisclaimer);
+            }
         }
 
 
@@ -110,7 +125,7 @@ namespace MultiRun {
             lbl.style.paddingTop = 0;
             lbl.style.paddingLeft = 0;
             lbl.style.paddingRight = 0;
-            scrollView.Add(lbl);
+            scrollView.Insert(0, lbl);
             return lbl;
         }
 
@@ -142,11 +157,7 @@ namespace MultiRun {
                 if(idx != -1) {
                     encounteredIgnoreAfterDelim = true;
                     tailBuffer = tailBuffer.Substring(0, idx);
-                    tailBuffer += "\n\n" + 
-                        "---------- MultiRun ----------\n" +
-                        "-- Application quit detected, tailing log stopped.\n" +
-                        "-- There might be more output in the log file.\n" +
-                        "-------------------------------\n\n";
+                    AddDEofDisclaimerLabel();
                 }
             }
 
@@ -155,7 +166,7 @@ namespace MultiRun {
             // premature optimization.
             int truncateLength = 2 * maxTailBufferLength;
             if(tailBuffer.Length > truncateLength) {
-                tailBuffer = tailBuffer.Substring(tailBuffer.Length - maxTailBufferLength);
+                tailBuffer = tailBuffer.Substring(tailBuffer.Length - maxTailBufferLength);                
             }
 
             string dispText = string.Empty;
@@ -206,6 +217,7 @@ namespace MultiRun {
             tailBuffer = string.Empty;
             lastFileSize = 0;
             encounteredIgnoreAfterDelim = false;
+            lblEofDisclaimer = null;
         }
     }
 }
