@@ -175,7 +175,7 @@ namespace MultiRun {
             SaveSettingsIfOpen();
             string parentDir = Path.GetDirectoryName(buildTools.GetBuildPath());
             if (Directory.Exists(parentDir)) {
-                EditorUtility.RevealInFinder(buildTools.GetBuildPath());
+                EditorUtility.OpenWithDefaultApp(parentDir);
             } else {
                 MuRu.LogError($"Cannot open {parentDir} because it does not exist.  Kicking off a build will create the path.");
             }

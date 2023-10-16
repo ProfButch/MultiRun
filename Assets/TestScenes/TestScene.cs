@@ -8,18 +8,19 @@ public class TestScene : MonoBehaviour
     float timeElapsed = 0.0f;
     int logCount = 0;
 
+
     public Button btnSceneTwo;
-    public Button btnPrintEof;
+
 
     private void Start() {
-        btnSceneTwo.onClick.AddListener(OnSceneTwoClicked);
-        btnPrintEof.onClick.AddListener(OnPrintEofClicked);
+        btnSceneTwo.onClick.AddListener(OnSceneTwoClicked);    
     }
 
+
     private void OnSceneTwoClicked() {
-        Debug.Log("clicked");
         SceneManager.LoadScene("SceneTwo");
     }
+
 
     void Update() {
         timeElapsed += Time.deltaTime;
@@ -30,8 +31,4 @@ public class TestScene : MonoBehaviour
         }
     }
 
-    void OnPrintEofClicked()
-    {
-        Debug.Log("-- multi run EOF --");
-    }
 }
