@@ -30,4 +30,5 @@
         </ui:VisualElement>
     </ui:ScrollView>
     <ui:Button text="Apply" display-tooltip-when-elided="true" name="Apply" />
+    <ui:Button text="Kill Running" display-tooltip-when-elided="true" name="kill-running" />
 </ui:UXML>

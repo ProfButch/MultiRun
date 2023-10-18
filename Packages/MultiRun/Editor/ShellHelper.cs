@@ -13,55 +13,49 @@ using System.Diagnostics;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace MultiRun
-{
-    public class ShellHelper
-    {
+namespace MultiRun {
+    public class ShellHelper {
 
-        public class ShellRequest
-        {
+        public class ShellRequest {
             public event System.Action<int, string> onLog;
             public event System.Action onError;
             public event System.Action onDone;
 
-            public void Log(int type, string log)
-            {
-                if (onLog != null)
-                {
+            public bool isDone = false;
+            public bool hasErrored = false;
+            public Process process;
+
+            public void Log(int type, string log) {
+                if (onLog != null) {
                     onLog(type, log);
                 }
-                if (type == 1)
-                {
+                if (type == 1) {
                     MuRu.LogError(log);
                 }
             }
 
-            public void NotifyDone()
-            {
-                if (onDone != null)
-                {
+            public void NotifyDone() {
+                isDone = true;
+                if (onDone != null) {
                     onDone();
                 }
             }
 
-            public void Error()
-            {
-                if (onError != null)
-                {
+            public void Error() {
+                hasErrored = true;
+                if (onError != null) {
                     onError();
                 }
             }
         }
 
 
-        private static string shellApp
-        {
-            get
-            {
+        private static string shellApp {
+            get {
 #if UNITY_EDITOR_WIN
 			    string app = "cmd.exe";
 #elif UNITY_EDITOR_OSX
-			    string app = "bash";
+                string app = "bash";
 #endif
                 return app;
             }
@@ -71,25 +65,18 @@ namespace MultiRun
         private static List<System.Action> _queue = new List<System.Action>();
 
 
-        static ShellHelper()
-        {
+        static ShellHelper() {
             _queue = new List<System.Action>();
             EditorApplication.update += OnUpdate;
         }
-        private static void OnUpdate()
-        {
-            for (int i = 0; i < _queue.Count; i++)
-            {
-                try
-                {
+        private static void OnUpdate() {
+            for (int i = 0; i < _queue.Count; i++) {
+                try {
                     var action = _queue[i];
-                    if (action != null)
-                    {
+                    if (action != null) {
                         action();
                     }
-                }
-                catch (System.Exception e)
-                {
+                } catch (System.Exception e) {
                     MuRu.LogException(e);
                 }
             }
@@ -98,28 +85,23 @@ namespace MultiRun
 
 
 
-        public static ShellRequest ProcessCommand(string cmd, string workDirectory, List<string> environmentVars = null)
-        {
+        public static ShellRequest ProcessCommand(string cmd, string workDirectory, List<string> environmentVars = null) {
             ShellRequest req = new ShellRequest();
-            System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
-            {
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state) {
                 Process p = null;
-                try
-                {
+                try {
                     ProcessStartInfo start = new ProcessStartInfo(shellApp);
 
 #if UNITY_EDITOR_OSX
-				    string splitChar = ":";
-				    start.Arguments = "-c";
+                    string splitChar = ":";
+                    start.Arguments = "-c";
 #elif UNITY_EDITOR_WIN
 				    string splitChar = ";";
 				    start.Arguments = "/c";
 #endif
 
-                    if (environmentVars != null)
-                    {
-                        foreach (string var in environmentVars)
-                        {
+                    if (environmentVars != null) {
+                        foreach (string var in environmentVars) {
                             start.EnvironmentVariables["PATH"] += (splitChar + var);
                         }
                     }
@@ -130,14 +112,11 @@ namespace MultiRun
                     start.UseShellExecute = false;
                     start.WorkingDirectory = workDirectory;
 
-                    if (start.UseShellExecute)
-                    {
+                    if (start.UseShellExecute) {
                         start.RedirectStandardOutput = false;
                         start.RedirectStandardError = false;
                         start.RedirectStandardInput = false;
-                    }
-                    else
-                    {
+                    } else {
                         start.RedirectStandardOutput = true;
                         start.RedirectStandardError = true;
                         start.RedirectStandardInput = true;
@@ -146,72 +125,62 @@ namespace MultiRun
                     }
 
                     p = Process.Start(start);
-                    p.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
-                    {
+                    req.process = p;
+                    MuRu.Trace($"1 exited={p.HasExited} pid={p.Id} name-{p.ProcessName}");
+                    p.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e) {
                         MuRu.LogError(e.Data);
                     };
-                    p.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
-                    {
+                    p.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e) {
                         MuRu.LogError(e.Data);
                     };
-                    p.Exited += delegate (object sender, System.EventArgs e)
-                    {
+                    p.Exited += delegate (object sender, System.EventArgs e) {
                         MuRu.LogError(e.ToString());
                     };
 
                     bool hasError = false;
-                    do
-                    {
+                    do {
                         string line = p.StandardOutput.ReadLine();
-                        if (line == null)
-                        {
+                        if (line == null) {
                             break;
                         }
+
                         line = line.Replace("\\", "/");
 
-                        _queue.Add(delegate ()
-                        {
+                        _queue.Add(delegate () {
                             req.Log(0, line);
                         });
 
                     } while (true);
+                    MuRu.Trace($"2 exited={p.HasExited}");
+                    
 
-                    while (true)
-                    {
+                    while (true) {
                         string error = p.StandardError.ReadLine();
-                        if (string.IsNullOrEmpty(error))
-                        {
+                        if (string.IsNullOrEmpty(error)) {
                             break;
                         }
                         hasError = true;
-                        _queue.Add(delegate ()
-                        {
+                        _queue.Add(delegate () {
                             req.Log(1, error);
                         });
                     }
-                    p.Close();
-                    if (hasError)
-                    {
-                        _queue.Add(delegate ()
-                        {
+
+                    MuRu.Trace($"3333 exited={p.HasExited}");
+                    //p.Close();
+                    if (hasError) {
+                        _queue.Add(delegate () {
                             req.Error();
                         });
-                    }
-                    else
-                    {
-                        _queue.Add(delegate ()
-                        {
+                    } else {
+                        _queue.Add(delegate () {
                             req.NotifyDone();
                         });
                     }
 
 
-                }
-                catch (System.Exception e)
-                {
+                } catch (System.Exception e) {
                     MuRu.LogException(e);
-                    if (p != null)
-                    {
+                    if (p != null) {
                         p.Close();
                     }
                 }
@@ -222,24 +191,19 @@ namespace MultiRun
 
         private List<string> _enviroumentVars = new List<string>();
 
-        public void AddEnvironmentVars(params string[] vars)
-        {
-            for (int i = 0; i < vars.Length; i++)
-            {
-                if (vars[i] == null)
-                {
+        public void AddEnvironmentVars(params string[] vars) {
+            for (int i = 0; i < vars.Length; i++) {
+                if (vars[i] == null) {
                     continue;
                 }
-                if (string.IsNullOrEmpty(vars[i].Trim()))
-                {
+                if (string.IsNullOrEmpty(vars[i].Trim())) {
                     continue;
                 }
                 _enviroumentVars.Add(vars[i]);
             }
         }
 
-        public ShellRequest ProcessCMD(string cmd, string workDir)
-        {
+        public ShellRequest ProcessCMD(string cmd, string workDir) {
             return ShellHelper.ProcessCommand(cmd, workDir, _enviroumentVars);
         }
 

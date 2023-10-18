@@ -36,6 +36,8 @@ namespace MultiRun
         ScrollView scroll;
         Label lblBuildError;
 
+        Button btnKillAllRunning;
+
         InstanceSettings allInstanceSettings;
         InstanceSettings[] instanceSettings = new InstanceSettings[4];
 
@@ -139,8 +141,16 @@ namespace MultiRun
             WireForChange(instanceSettings[2].txtArguments);
             instanceSettings[3] = new InstanceSettings(FirstCtrl<VisualElement>("Instance4Settings"));
             WireForChange(instanceSettings[3].txtArguments);
+
+            btnKillAllRunning = FirstCtrl<Button>("kill-running");
+            btnKillAllRunning.clicked += OnKillAllClicked;
         }
 
+
+        private void OnKillAllClicked()
+        {
+            BuildTools.KillAllRunningBuilds();
+        }
 
         private void MarkChanged() {
             btnApply.text = "* Apply";

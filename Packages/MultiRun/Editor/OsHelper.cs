@@ -48,6 +48,7 @@ namespace MultiRun {
 
         private string RunBuildCmdOsx(string path, string args)
         {
+            return $"{path}/Contents/MacOS/MultiRun {args}";
             // Uses open to launch the app so we do not have to know where the 
             // actual executable is inside the .app bundle.
             return $"open -n {path} --args {args}";

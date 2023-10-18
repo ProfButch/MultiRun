@@ -6,7 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using MultiRun;
 using MultiRun.Cli;
-
+using System.Threading.Tasks;
 
 
 
@@ -15,6 +15,21 @@ namespace MultiRun {
     public class BuildTools { 
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
         private static OsHelper osHelper = new OsHelper();
+        private static List<ShellHelper.ShellRequest> runningBuilds = new List<ShellHelper.ShellRequest>();
+
+
+        public static void KillAllRunningBuilds()
+        {
+            foreach(ShellHelper.ShellRequest req in runningBuilds) {
+                Debug.Log($"request {req} is done = {req.isDone}");
+                Debug.Log($"process exited={req.process.HasExited}");
+                if (!req.process.HasExited)
+                {
+                    req.process.Kill();
+                }
+            }
+        }
+
 
         public string buildPath
         {
@@ -82,9 +97,19 @@ namespace MultiRun {
         }
 
 
-        public void RunBuild(string path, string logfile, string args) {
+        public async void RunBuild(string path, string logfile, string args) {
             string cmd = MakeRunBuildCmd(path, logfile, args);
             MuRu.Log($"[running]:  {cmd}");
+            ShellHelper.ShellRequest req = ShellHelper.ProcessCommand(cmd, "/");
+            runningBuilds.Add(req);
+            for(int i = 0; i < 10; i++) {
+                await Task.Yield();
+            }                
+
+            string osascript = $"tell application \\\"System Events\\\"  to set frontmost of every process whose unix id is {req.process.Id} to true";
+            cmd = $"osascript -e '{osascript}'";
+            //cmd = $"osascript -e \"activate application '{path}'\"";
+            MuRu.Trace($"[running]: {cmd}");
             ShellHelper.ProcessCommand(cmd, "/");
         }
 

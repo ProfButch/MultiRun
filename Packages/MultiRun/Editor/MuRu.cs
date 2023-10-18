@@ -35,6 +35,10 @@ namespace MultiRun
             Debug.LogError($"{PRE}{msg}");
         }
 
+        public static void Trace(string msg)
+        {
+            Debug.Log($"[trace]{PRE}{msg}");
+        }
 
         // Couldn't think of a clever way to add [MultiRun] to this one, but it
         // is here for completeness.
