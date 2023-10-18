@@ -7,14 +7,13 @@ using UnityEngine.UI;
 public class CurrentScene : MonoBehaviour
 {
     public Button btnPrintHelloWorld;
+    public Button btnPrintEOF;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (btnPrintHelloWorld)
-        {
-            btnPrintHelloWorld.onClick.AddListener(OnBtnHellowWorldClicked);
-        }    
+        btnPrintHelloWorld.onClick.AddListener(OnBtnHellowWorldClicked);
+        btnPrintEOF.onClick.AddListener(OnBtnPrintEofClicked);
     }
 
 
@@ -22,5 +21,10 @@ public class CurrentScene : MonoBehaviour
     private void OnBtnHellowWorldClicked()
     {
         Debug.Log("Hello World");
+    }
+
+    private void OnBtnPrintEofClicked()
+    {
+        Debug.Log(MultiRun.MultiRunMono.APP_END_IND);
     }
 }
