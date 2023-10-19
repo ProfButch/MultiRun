@@ -37,6 +37,7 @@ namespace MultiRun
         Label lblBuildError;
 
         Button btnKillAllRunning;
+        Button btnBringToFront;
 
         InstanceSettings allInstanceSettings;
         InstanceSettings[] instanceSettings = new InstanceSettings[4];
@@ -144,12 +145,20 @@ namespace MultiRun
 
             btnKillAllRunning = FirstCtrl<Button>("kill-running");
             btnKillAllRunning.clicked += OnKillAllClicked;
+
+            btnBringToFront = FirstCtrl<Button>("bring-to-front");
+            btnBringToFront.clicked += OnBringToFrontClicked;
         }
 
 
         private void OnKillAllClicked()
         {
             BuildTools.KillAllRunningBuilds();
+        }
+
+        private void OnBringToFrontClicked()
+        {
+            BuildTools.BringAllToFront();
         }
 
         private void MarkChanged() {

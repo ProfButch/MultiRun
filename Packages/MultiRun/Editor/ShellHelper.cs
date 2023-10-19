@@ -1,6 +1,7 @@
 /*
  * Copied Verbatim from
  * https://github.com/wlgys8/UnityShellHelper
+ * I've since updated some things, so it's not a verbatim copy anymore.
  *
  * The author has a new, more robust solution, but this works and it's a single
  * file and fits my needs now.
@@ -24,6 +25,7 @@ namespace MultiRun {
             public bool isDone = false;
             public bool hasErrored = false;
             public Process process;
+            public string cmd = "";
 
             public void Log(int type, string log) {
                 if (onLog != null) {
@@ -69,6 +71,8 @@ namespace MultiRun {
             _queue = new List<System.Action>();
             EditorApplication.update += OnUpdate;
         }
+
+
         private static void OnUpdate() {
             for (int i = 0; i < _queue.Count; i++) {
                 try {
@@ -83,10 +87,20 @@ namespace MultiRun {
             _queue.Clear();
         }
 
+        public static ShellRequest ProcessCommandAutoClose(string cmd, string workDirectory="/", List<string> environmentVars = null) {
+            ShellRequest req = ProcessCommand(cmd, workDirectory, environmentVars);
+            //req.process.Close();
+            return req;
+        }
 
+        public static ShellRequest ProcessCommandKeepOpen(string cmd, string workDirectory="/", List<string> environmentVars = null) {
+            return ProcessCommand(cmd, workDirectory, environmentVars);
+        }
 
-        public static ShellRequest ProcessCommand(string cmd, string workDirectory, List<string> environmentVars = null) {
+        private static ShellRequest ProcessCommand(string cmd, string workDirectory, List<string> environmentVars = null) {
             ShellRequest req = new ShellRequest();
+            req.cmd = cmd;
+
             System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state) {
                 Process p = null;
                 try {
@@ -126,7 +140,8 @@ namespace MultiRun {
 
                     p = Process.Start(start);
                     req.process = p;
-                    MuRu.Trace($"1 exited={p.HasExited} pid={p.Id} name-{p.ProcessName}");
+
+
                     p.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e) {
                         MuRu.LogError(e.Data);
                     };
@@ -151,7 +166,6 @@ namespace MultiRun {
                         });
 
                     } while (true);
-                    MuRu.Trace($"2 exited={p.HasExited}");
                     
 
                     while (true) {
@@ -165,7 +179,6 @@ namespace MultiRun {
                         });
                     }
 
-                    MuRu.Trace($"3333 exited={p.HasExited}");
                     //p.Close();
                     if (hasError) {
                         _queue.Add(delegate () {
@@ -189,23 +202,23 @@ namespace MultiRun {
         }
 
 
-        private List<string> _enviroumentVars = new List<string>();
+        //private List<string> _enviroumentVars = new List<string>();
 
-        public void AddEnvironmentVars(params string[] vars) {
-            for (int i = 0; i < vars.Length; i++) {
-                if (vars[i] == null) {
-                    continue;
-                }
-                if (string.IsNullOrEmpty(vars[i].Trim())) {
-                    continue;
-                }
-                _enviroumentVars.Add(vars[i]);
-            }
-        }
+        //public void AddEnvironmentVars(params string[] vars) {
+        //    for (int i = 0; i < vars.Length; i++) {
+        //        if (vars[i] == null) {
+        //            continue;
+        //        }
+        //        if (string.IsNullOrEmpty(vars[i].Trim())) {
+        //            continue;
+        //        }
+        //        _enviroumentVars.Add(vars[i]);
+        //    }
+        //}
 
-        public ShellRequest ProcessCMD(string cmd, string workDir) {
-            return ShellHelper.ProcessCommand(cmd, workDir, _enviroumentVars);
-        }
+        //public ShellRequest ProcessCMD(string cmd, string workDir) {
+        //    return ShellHelper.ProcessCommand(cmd, workDir, _enviroumentVars);
+        //}
 
     }
 }

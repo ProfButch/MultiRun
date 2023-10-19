@@ -68,24 +68,6 @@ namespace MultiRun {
             return toReturn;
         }
 
-        private BuildPlayerOptions BuildOptsOsx()
-        {
-            BuildPlayerOptions opts = new BuildPlayerOptions();
-            opts.target = BuildTarget.StandaloneOSX;
-            opts.targetGroup = BuildTargetGroup.Standalone;
-
-            return opts;
-        }
-
-        private BuildPlayerOptions BuildOptsWin()
-        {
-            BuildPlayerOptions opts = new BuildPlayerOptions();
-            opts.target = BuildTarget.StandaloneWindows;
-            opts.targetGroup = BuildTargetGroup.Standalone;
-
-            return opts;
-        }
-
 
         // Must use the full path the to log so that it works on windows and
         // mac.  I think mac changes the working directory when using open, but
@@ -109,5 +91,46 @@ namespace MultiRun {
             }
             return opts;
         }
+
+
+        private BuildPlayerOptions BuildOptsOsx() {
+            BuildPlayerOptions opts = new BuildPlayerOptions();
+            opts.target = BuildTarget.StandaloneOSX;
+            opts.targetGroup = BuildTargetGroup.Standalone;
+
+            return opts;
+        }
+
+
+        private BuildPlayerOptions BuildOptsWin() {
+            BuildPlayerOptions opts = new BuildPlayerOptions();
+            opts.target = BuildTarget.StandaloneWindows;
+            opts.targetGroup = BuildTargetGroup.Standalone;
+
+            return opts;
+        }
+
+
+
+        public string BringToFront(ShellHelper.ShellRequest req) {
+            if (mode == MODE_WIN) {
+                return "";
+            } else if (mode == MODE_OSX) {            
+                return BringToFrontOsx(req);
+            }else {
+                return "";
+            }            
+        }
+
+
+        public string BringToFrontOsx(ShellHelper.ShellRequest req)
+        {
+            string osascript = $"tell application \\\"System Events\\\"  to set frontmost of every process whose unix id is {req.process.Id} to true";
+            //string cmd = $"osascript -e activate application \\\"{path}\\\"";
+            string cmd = $"osascript -e '{osascript}'";                       
+            return cmd;
+
+        }
+
     }
 }
