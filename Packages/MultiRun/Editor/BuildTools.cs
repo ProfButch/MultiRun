@@ -14,7 +14,7 @@ namespace MultiRun {
 
     public class BuildTools { 
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
-        private static OsHelper osHelper = new OsHelper();
+        private static OsHelpers.OsHelper osHelper = new OsHelpers.OsHelper();
         private static List<ShellHelper.ShellRequest> runningBuilds = new List<ShellHelper.ShellRequest>();
 
 
@@ -37,7 +37,7 @@ namespace MultiRun {
                 Debug.Log($"process exited={req.process.HasExited}");
                 if (!req.process.HasExited)
                 {
-                    string cmd = osHelper.BringToFront(req);
+                    string cmd = osHelper.CmdBringToFront(req);
                     ShellHelper.ProcessCommandAutoClose(cmd);
                 }
             }
@@ -105,7 +105,7 @@ namespace MultiRun {
             if(allArgs.IndexOf("--logfile") == -1) {
                 allArgs = osHelper.GetLogfileArg(path, logfile) + args;
             }
-            string cmd = osHelper.RunBuildCommand(path, allArgs);
+            string cmd = osHelper.CmdLaunchBuild(path, allArgs);
             return cmd;
         }
 
@@ -119,7 +119,7 @@ namespace MultiRun {
                 await Task.Yield();
             }
 
-            cmd = osHelper.BringToFront(req);
+            cmd = osHelper.CmdBringToFront(req);
             ShellHelper.ProcessCommandAutoClose(cmd);
         }
 

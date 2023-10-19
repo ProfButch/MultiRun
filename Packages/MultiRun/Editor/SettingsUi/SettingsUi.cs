@@ -23,7 +23,7 @@ namespace MultiRun
         // ---------------------------------------------------------------------
         // Start RunSettings
         // ---------------------------------------------------------------------
-        private OsHelper osHelper = new OsHelper();
+        private OsHelpers.OsHelper osHelper = new OsHelpers.OsHelper();
         public bool hasChanges = false;
 
         Toggle tglArrangeWindows;
