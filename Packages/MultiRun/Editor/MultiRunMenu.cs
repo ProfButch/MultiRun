@@ -135,28 +135,28 @@ namespace MultiRun {
         [MenuItem("MultiRun/Run/1", false, 200)]
         private static void MnuRun1() {
             SaveSettingsIfOpen();
-            buildTools.RunBuildXTimes(1);
+            buildTools.RunXBuilds(1);
         }
 
 
         [MenuItem("MultiRun/Run/2", false, 200)]
         private static void MnuRun2() {
             SaveSettingsIfOpen();
-            buildTools.RunBuildXTimes(2);
+            buildTools.RunXBuilds(2);
         }
 
 
         [MenuItem("MultiRun/Run/3", false, 200)]
         private static void MnuRun3() {
             SaveSettingsIfOpen();
-            buildTools.RunBuildXTimes(3);
+            buildTools.RunXBuilds(3);
         }
 
 
         [MenuItem("MultiRun/Run/4", false, 200)]
         private static void MnuRun4() {
             SaveSettingsIfOpen();
-            buildTools.RunBuildXTimes(4);
+            buildTools.RunXBuilds(4);
         }
 
 

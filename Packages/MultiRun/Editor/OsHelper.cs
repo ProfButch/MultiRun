@@ -30,7 +30,7 @@ namespace MultiRun.OsHelpers {
 
 
         override public string CmdBringToFront(ShellHelper.ShellRequest req) {
-            return "not implemented";
+            return "";
         }
     }
 
@@ -62,7 +62,7 @@ namespace MultiRun.OsHelpers {
                 if (fline.StartsWith("<key>")) {
                     curKey = fline.Replace("<key>", "").Replace("</key>", "");
                 } else if (curKey != string.Empty && fline.StartsWith("<string>")) {
-                    curValue = fline.Replace("<string>", "").Replace("</string>", "");
+                    curValue = fline.Replace("<string>", "").Replace("</string>", "").Trim();
                 }
 
                 if (curValue != string.Empty && curValue != string.Empty) {
@@ -77,23 +77,36 @@ namespace MultiRun.OsHelpers {
 
         private string GetExecutableNameForApp(string appPath) {
             Dictionary<string, string> data = ParsePlist(appPath);
+            string toReturn = string.Empty;
             if (data.ContainsKey(PLIST_EXEC_KEY)) {
-                return data[PLIST_EXEC_KEY];
-            } else {
-                return string.Empty;
+                toReturn =  data[PLIST_EXEC_KEY];
             }
+            return toReturn;
         }
 
 
+        /// <summary>
+        /// This will attempt to find the executable for the .app and use that
+        /// for the launch command.  If it cannot get the executable name out of
+        /// the plist for the app then it will return a command that uses open.
+        ///
+        /// When open is used, you will not have a handle to the actual game process
+        /// and will not be able to kill it or anything else.
+        /// </summary>
+        /// <param name="path">path to the .app directory</param>
+        /// <param name="args">arguments to be passed to the app</param>
+        /// <returns>the command used to launch the app</returns>
         override public string CmdLaunchBuild(string path, string args = "") {
             string execName = GetExecutableNameForApp(path);
-            if (execName == string.Empty) {
+            string execPath = $"{path}/Contents/MacOS/{execName}";
+
+            if (execName == string.Empty || !File.Exists(execPath)) {
                 MuRu.LogWarning(
                     $"Could not find executable path for {path} using open instead.  " +
                     "Some features may not work with this launched instance of the game.");
                 return $"open -n {path} --args {args}";
             } else {
-                return $"{path}/Contents/MacOS/{execName} {args}";
+                return $"{execPath} {args}";
             }
         }
 
@@ -114,7 +127,6 @@ namespace MultiRun.OsHelpers {
             return cmd;
         }
     }
-
 
 
     public class OsHelper {
@@ -183,13 +195,11 @@ namespace MultiRun.OsHelpers {
 
 
         public string CmdBringToFront(ShellHelper.ShellRequest req) {
-            if (mode == MODE_WIN) {
-                return "";
-            } else if (mode == MODE_OSX) {
-                return theHelper.CmdBringToFront(req);
-            } else {
-                return "";
+            string toReturn = "";
+            if (theHelper != null) {
+                toReturn = theHelper.CmdBringToFront(req);
             }
+            return toReturn;
         }
     }
 }

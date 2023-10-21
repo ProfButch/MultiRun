@@ -12,31 +12,24 @@ using System.Threading.Tasks;
 
 namespace MultiRun {
 
-    public class BuildTools { 
+    public class BuildTools {
         public const string PREF_BUILD_PATH = "MultiRun.BuildPath";
         private static OsHelpers.OsHelper osHelper = new OsHelpers.OsHelper();
         private static List<ShellHelper.ShellRequest> runningBuilds = new List<ShellHelper.ShellRequest>();
 
 
-        public static void KillAllRunningBuilds()
-        {
-            foreach(ShellHelper.ShellRequest req in runningBuilds) {
-                Debug.Log($"request {req} is done = {req.isDone}");
-                Debug.Log($"process exited={req.process.HasExited}");
-                if (!req.process.HasExited)
-                {
+        public static void KillAllRunningBuilds() {
+            foreach (ShellHelper.ShellRequest req in runningBuilds) {
+                if (!req.process.HasExited) {
                     req.process.Kill();
                 }
             }
         }
 
-        public static void BringAllToFront()
-        {
-            foreach(ShellHelper.ShellRequest req in runningBuilds) {
-                Debug.Log($"request {req} is done = {req.isDone}");
-                Debug.Log($"process exited={req.process.HasExited}");
-                if (!req.process.HasExited)
-                {
+
+        public static void BringAllToFront() {
+            foreach (ShellHelper.ShellRequest req in runningBuilds) {
+                if (!req.process.HasExited) {
                     string cmd = osHelper.CmdBringToFront(req);
                     ShellHelper.ProcessCommandAutoClose(cmd);
                 }
@@ -44,8 +37,7 @@ namespace MultiRun {
         }
 
 
-        public string buildPath
-        {
+        public string buildPath {
             get {
                 if (EditorPrefs.HasKey(PREF_BUILD_PATH)) {
                     return EditorPrefs.GetString(PREF_BUILD_PATH);
@@ -99,10 +91,9 @@ namespace MultiRun {
         }
 
 
-        public string MakeRunBuildCmd(string path, string logfile, string args)
-        {
+        public string MakeRunBuildCmd(string path, string logfile, string args) {
             string allArgs = args;
-            if(allArgs.IndexOf("--logfile") == -1) {
+            if (allArgs.IndexOf("--logfile") == -1) {
                 allArgs = osHelper.GetLogfileArg(path, logfile) + args;
             }
             string cmd = osHelper.CmdLaunchBuild(path, allArgs);
@@ -115,7 +106,7 @@ namespace MultiRun {
             MuRu.Log($"[running]:  {cmd}");
             ShellHelper.ShellRequest req = ShellHelper.ProcessCommandKeepOpen(cmd);
             runningBuilds.Add(req);
-            for(int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++) {
                 await Task.Yield();
             }
 
@@ -156,14 +147,13 @@ namespace MultiRun {
         }
 
 
-        public void RunBuildX(string path, int i)
-        {
+        public void RunBuildX(string path, int i) {
             string moreArgs = MakeRunBuildXCmd(path, i);
             RunBuild(path, makeLogNameFromPath(path, $"_{i + 1}"), moreArgs);
         }
 
 
-        public void RunBuildXTimes(int x = 1) {
+        public void RunXBuilds(int x = 1) {
             string curPath = GetBuildPath();
 
             if (curPath != string.Empty) {
@@ -180,7 +170,7 @@ namespace MultiRun {
             if (GetBuildPath() != string.Empty) {
                 bool result = Build(GetBuildPath(), runCurrentScene);
                 if (result) {
-                    RunBuildXTimes(x);
+                    RunXBuilds(x);
                 }
             }
         }
@@ -198,7 +188,7 @@ namespace MultiRun {
                 opts.scenes = getBuildScenes();
             }
 
-            if(opts.scenes.Length == 0){
+            if (opts.scenes.Length == 0) {
                 MuRu.LogError("There are no scenes in the build.  Add at least one scene in Build Settings.");
                 return false;
             }

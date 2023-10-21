@@ -8,52 +8,60 @@ using MultiRun;
 using MultiRun.OsHelpers;
 using System.IO;
 
-public class TestOsHelper
-{
-    public class TestOsxHelper
-    {
-        private class MockApp
-        {
+public class TestOsHelper {
+    public class TestOsxHelper {
+        private class MockApp {
             public string appPath;
             private string srcPlistName;
             private string resourcePath;
+            private string execName;
 
-            public MockApp(string appName, string testResourcePath, string plistName) {
+            /// <summary>
+            /// Note executableName should be the same name as in the plist.
+            /// </summary>
+            /// <param name="appName"></param>
+            /// <param name="testResourcePath"></param>
+            /// <param name="plistName"></param>
+            /// <param name="executableName"></param>
+            public MockApp(string appName, string testResourcePath, string plistName, string executableName) {
                 appPath = Path.Join(
                     Application.persistentDataPath,
                     $"{appName}.app");
                 srcPlistName = plistName;
                 resourcePath = testResourcePath;
+                execName = executableName;
             }
 
-            public string ContentsPath()
-            {
+            public string ContentsPath() {
                 return Path.Join(appPath, "Contents");
             }
 
-            public string MacOsPath()
-            {
+            public string MacOsPath() {
                 return Path.Join(ContentsPath(), "MacOS");
             }
 
-            public string PlistPath()
-            {
+            public string PlistPath() {
                 return Path.Join(ContentsPath(), "Info.plist");
             }
 
-            public void CreateApp()
-            {
-                Directory.CreateDirectory(appPath);            
-                Directory.CreateDirectory(ContentsPath());            
+            public void CreateApp() {
+                Directory.CreateDirectory(appPath);
+                Directory.CreateDirectory(ContentsPath());
                 Directory.CreateDirectory(MacOsPath());
                 File.Copy(
                     Path.Join(resourcePath, srcPlistName),
                     Path.Join(ContentsPath(), "Info.plist"));
+                File.Create(Path.Join(MacOsPath(), execName));
             }
 
             public void Delete() {
-                if (Directory.Exists(appPath)) {
-                    Directory.Delete(appPath, true);
+                // Just make sure we don't accidentally set an app path to
+                // root or something over the course of the tests.  At least
+                // this will only delete one app.
+                if (appPath.StartsWith(Application.persistentDataPath) &&
+                    appPath.EndsWith(".app") &&
+                    Directory.Exists(appPath)) {
+                        Directory.Delete(appPath, true);
                 }
             }
         }
@@ -62,14 +70,16 @@ public class TestOsHelper
         private MockApp fakeApp;
         private MockApp anotherApp;
         private MockApp invalidApp;
+        private MockApp execDoesNotMatchApp;
 
         private string testResourcePath;
 
 
-        private void CreateTestData() {            
-            fakeApp.CreateApp();            
+        private void CreateTestData() {
+            fakeApp.CreateApp();
             anotherApp.CreateApp();
             invalidApp.CreateApp();
+            execDoesNotMatchApp.CreateApp();
         }
 
 
@@ -85,57 +95,64 @@ public class TestOsHelper
             fakeApp.Delete();
             anotherApp.Delete();
             invalidApp.Delete();
+            execDoesNotMatchApp.Delete();
         }
-          
+
 
         [OneTimeSetUp]
         public void Init() {
             PopulatePaths();
-            fakeApp = new MockApp("FakeApp", testResourcePath, "FakeApp_Info.plist");
-            anotherApp = new MockApp("AnotherApp", testResourcePath, "AnotherApp_Info.plist");
-            invalidApp = new MockApp("InvalidApp", testResourcePath, "Invalid_Info.plist");
-            CleanUpTestData();            
+            fakeApp = new MockApp(
+                "FakeApp", testResourcePath, "FakeApp_Info.plist", "FakeAppExecutable");
+            anotherApp = new MockApp(
+                "AnotherApp", testResourcePath, "AnotherApp_Info.plist", "AnotherAppExecutable");
+            invalidApp = new MockApp(
+                "InvalidApp", testResourcePath, "Invalid_Info.plist", "whatever");
+            execDoesNotMatchApp = new MockApp(
+                "DoesNotMatchApp", testResourcePath, "FakeApp_Info.plist", "DoesNotMatchPlistEntry");
+            CleanUpTestData();
             CreateTestData();
         }
 
 
         [OneTimeTearDown]
-        public void CleanUp()
-        {
-            //CleanUpTestData();
+        public void CleanUp() {
+            CleanUpTestData();
         }
 
 
         [Test]
         public void TestCanMakeOne() {
             OsxHelper h = new OsxHelper();
-            Assert.NotNull(h);            
+            Assert.NotNull(h);
         }
 
         [Test]
-        public void CmdLaunchBuildFindsExecutableNameInPlistFileAndUsesIt()
-        {
+        public void CmdLaunchBuildFindsExecutableNameInPlistFileAndUsesIt() {
             OsxHelper h = new OsxHelper();
             string cmd = h.CmdLaunchBuild(fakeApp.appPath);
             StringAssert.Contains("FakeAppExecutable", cmd);
         }
 
         [Test]
-        public void CmdLaunchBuildFindsExecutableInAnotherPlist()
-        {
+        public void CmdLaunchBuildFindsExecutableInAnotherPlist() {
             OsxHelper h = new OsxHelper();
             string cmd = h.CmdLaunchBuild(anotherApp.appPath);
             StringAssert.Contains("AnotherAppExecutable", cmd);
         }
 
         [Test]
-        public void CmdLaunchBuildUsesOpenWhenItCannotFindExecutableName()
-        {
+        public void CmdLaunchBuildUsesOpenWhenItCannotFindExecutableName() {
             OsxHelper h = new OsxHelper();
             string cmd = h.CmdLaunchBuild(invalidApp.appPath);
             StringAssert.StartsWith("open", cmd);
         }
 
-        
+        [Test]
+        public void CmdLaunchBuiildUsesOpenWhenExecutableFileNotFound() {
+            OsxHelper h = new OsxHelper();
+            string cmd = h.CmdLaunchBuild(execDoesNotMatchApp.appPath);
+            StringAssert.StartsWith("open", cmd);
+        }
     }
 }
